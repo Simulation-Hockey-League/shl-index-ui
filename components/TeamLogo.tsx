@@ -226,7 +226,7 @@ const getLogoId = (
             return { spriteId: 'LasVegasKings', isHistorical: true };
           }
         case 'POR':
-          if (season < 36) {
+          if (season < 38) {
             return { spriteId: 'PortlandAdmirals', isHistorical: true };
           }
         case 'TBH':
@@ -458,8 +458,9 @@ export const TeamLogo = ({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className={className}
-      src={`/stack/${isHistorical ? 'historical' : ''
-        }${league.toLowerCase()}.stack.svg#${spriteId}`}
+      src={`/stack/${
+        isHistorical ? 'historical' : ''
+      }${league.toLowerCase()}.stack.svg#${spriteId}`}
     />
   );
 };
