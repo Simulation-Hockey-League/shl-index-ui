@@ -11,7 +11,7 @@ export const shouldShowDivision = (
   season?: number,
 ): boolean => {
   return (
-    (league === 'shl' && !!season && season > 46) ||
+    (league === 'shl' && !!season && season < 83 && season > 46) ||
     (league === 'smjhl' && !!season && season < 76 && season > 53)
   );
 };
