@@ -68,11 +68,15 @@ const getLogoId = (
             return { spriteId: 'CalgaryPreS58', isHistorical: true };
           }
           return 'Calgary';
+        case 'CIN':
+          return 'Cincinnati';
         case 'CHI':
           if (season < 54) {
             return { spriteId: 'ChicagoPreS54', isHistorical: true };
           }
           return 'Chicago';
+        case 'DEN':
+          return 'Denver';
         case 'EDM':
           if (season < 10) {
             return { spriteId: 'EdmontonPreS10', isHistorical: true };
@@ -112,6 +116,8 @@ const getLogoId = (
             return { spriteId: 'Los_AngelesPreS64', isHistorical: true };
           }
           return 'Los_Angeles';
+        case 'MAD':
+          return 'Madison';
         case 'MAN':
           if (season < 6) {
             return { spriteId: 'ManhattanPreS6', isHistorical: true };
@@ -145,6 +151,8 @@ const getLogoId = (
             return { spriteId: 'MontrealPreS66', isHistorical: true };
           }
           return 'Montreal';
+        case 'NSH':
+          return 'Nashville';
         case 'NEW':
           if (season < 43) {
             return { spriteId: 'New_EnglandPreS43', isHistorical: true };
@@ -218,7 +226,7 @@ const getLogoId = (
             return { spriteId: 'LasVegasKings', isHistorical: true };
           }
         case 'POR':
-          if (season < 36) {
+          if (season < 38) {
             return { spriteId: 'PortlandAdmirals', isHistorical: true };
           }
         case 'TBH':
