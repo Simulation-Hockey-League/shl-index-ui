@@ -7,11 +7,11 @@
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "next lint",
-    "create-sprites": "ts-node -O '{\"module\": \"commonjs\"}' ./scripts/createSprites.ts",
+    "create-sprites": "ts-node -O {\"\"\"module\"\"\":\"\"\"commonjs\"\"\"} ./scripts/createSprites.ts",
     "postinstall": "yarn run create-sprites"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.13",
+    "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
