@@ -220,16 +220,30 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                 </div>
                 <div>
                   {playerPortalID && playerPortalID.length > 0 && (
-                    <Link
-                      className="!text-blue600"
-                      href={`https://portal.simulationhockey.com/player/${playerPortalID[0].playerUpdateID}`}
-                      isExternal
-                      //Need to figure out system of when 2 players are on the same ID.
-                      // Is it fix it in the db? Would be the best way. Need to talk with Grok
-                      // Biggest glare is IIHF and WJC Files. Then sometimes SMJHL as well
-                    >
-                      View in portal <ExternalLinkIcon />
-                    </Link>
+                    <div className="space-y-1 text-center">
+                      {playerPortalID.map((entry, idx) => {
+                        const firstSeason = entry.startSeason;
+                        const matchingRating = (
+                          playerRatings as PlayerRatings[] | GoalieRatings[]
+                        )?.find((rating) => rating.season === firstSeason);
+                        const displayName =
+                          matchingRating?.name ?? `Player ${idx + 1}`;
+                        const showName = playerPortalID.length > 1;
+
+                        return (
+                          <div key={entry.playerUpdateID}>
+                            <Link
+                              className="!text-blue600"
+                              href={`https://portal.simulationhockey.com/player/${entry.playerUpdateID}`}
+                              isExternal
+                            >
+                              {showName && <>{displayName} – </>}
+                              View in portal <ExternalLinkIcon mx="2px" />
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
                 <div className="text-center font-mont text-lg uppercase">
