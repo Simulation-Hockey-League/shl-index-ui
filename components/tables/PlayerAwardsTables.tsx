@@ -1,3 +1,4 @@
+import { Tooltip } from '@chakra-ui/react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,8 +13,6 @@ import { InternalPlayerAchievement } from '../../typings/portalApi';
 import { Table } from './Table';
 import { AWARD_TABLE_FLAGS } from './tableBehavioralFlags';
 import { TableHeader } from './TableHeader';
-
-import { Tooltip } from '@chakra-ui/react';
 
 const columnHelper = createColumnHelper<InternalPlayerAchievement>();
 
