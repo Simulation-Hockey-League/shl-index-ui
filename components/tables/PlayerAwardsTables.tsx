@@ -4,6 +4,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { AchievementTeamDetail } from 'components/common/AchievementTeamDetails';
 import { useMemo } from 'react';
 
 import { InternalPlayerAchievement } from '../../typings/portalApi';
@@ -11,6 +12,8 @@ import { InternalPlayerAchievement } from '../../typings/portalApi';
 import { Table } from './Table';
 import { AWARD_TABLE_FLAGS } from './tableBehavioralFlags';
 import { TableHeader } from './TableHeader';
+
+import { Tooltip } from '@chakra-ui/react';
 
 const columnHelper = createColumnHelper<InternalPlayerAchievement>();
 
@@ -34,11 +37,29 @@ export const PlayerAwards = ({
           id: 'awardResult',
           header: () => <TableHeader title="Award">Award</TableHeader>,
           enableGlobalFilter: true,
+          cell: (info) => {
+            const row = info.row.original;
+            const result = row.isAward ? (row.won ? 'Won' : 'Nom') : '';
+            const label = `${row.achievementName}${
+              result ? ` - ${result}` : ''
+            }`;
+
+            return (
+              <Tooltip label={row.achievementDescription} hasArrow>
+                <span>{label}</span>
+              </Tooltip>
+            );
+          },
         },
       ),
       columnHelper.accessor('teamID', {
-        header: () => <TableHeader title="Team">Team</TableHeader>, //Figure out way to put team Abbr or logo here
+        id: 'teamDetails',
+        header: () => <TableHeader title="Team">Team</TableHeader>,
         enableGlobalFilter: true,
+        cell: (info) => {
+          const row = info.row.original;
+          return <AchievementTeamDetail achievement={row} />;
+        },
       }),
     ],
     [],
