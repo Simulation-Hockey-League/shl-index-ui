@@ -10,7 +10,7 @@ export const query = async (uri: string) => {
 };
 
 export const portalQuery = async (uri: string) => {
-  const response = await fetch(`https://portal.simulationhockey.com/${uri}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_PORTAL_PATH}/${uri}`);
 
   if (!response.ok) {
     throw new Error('Network request failed');

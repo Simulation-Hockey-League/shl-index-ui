@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { Team } from 'typings/api';
-import { InternalPlayerAchievement } from 'typings/portalApi';
+import { InternalPlayerAchievement } from 'typings/portal-api';
 import { query } from 'utils/query';
 
 export const AchievementTeamDetail = ({
