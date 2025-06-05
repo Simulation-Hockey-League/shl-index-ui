@@ -8,7 +8,7 @@ import {
 import { AchievementTeamDetail } from 'components/common/AchievementTeamDetails';
 import { useMemo } from 'react';
 
-import { InternalPlayerAchievement } from '../../typings/portalApi';
+import { InternalPlayerAchievement } from '../../typings/portal-api';
 
 import { Table } from './Table';
 import { AWARD_TABLE_FLAGS } from './tableBehavioralFlags';

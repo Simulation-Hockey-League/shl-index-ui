@@ -19,7 +19,7 @@ import { useEffect, useRef } from 'react';
 import {
   InternalIndexPlayerID,
   InternalPlayerAchievement,
-} from 'typings/portalApi';
+} from 'typings/portal-api';
 
 import { Footer } from '../../../components/Footer';
 import { Header } from '../../../components/Header';
@@ -73,9 +73,10 @@ const fetchPortalID = (league: League, playerId: string) =>
 export default ({ playerId, league }: { playerId: string; league: League }) => {
   const router = useRouter();
 
-  const { portalView } = router.query;
+  const { portalView, season } = router.query;
 
   const shouldShowIndexView = !portalView;
+  console.log(season);
 
   const { setTheme } = useTheme();
 
