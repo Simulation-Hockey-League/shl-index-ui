@@ -15,7 +15,7 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { useTheme } from 'next-themes';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   InternalIndexPlayerID,
   InternalPlayerAchievement,
@@ -49,11 +49,11 @@ const fetchPlayerType = (league: League, playerId: string) =>
       league,
     )}&playerId=${playerId}`,
   );
-const fetchPlayerName = (league: League, playerId: string) =>
+const fetchPlayerName = (league: League, playerId: string, seasonId?: string) =>
   query(
     `api/v2/player/playerName?league=${leagueNameToId(
       league,
-    )}&playerId=${playerId}`,
+    )}&playerId=${playerId}${seasonId ? `&seasonId=${seasonId}` : ''}`,
   );
 
 const fetchPlayerAwards = (league: League, playerId: string) =>
@@ -76,7 +76,6 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
   const { portalView, season } = router.query;
 
   const shouldShowIndexView = !portalView;
-  console.log(season);
 
   const { setTheme } = useTheme();
 
@@ -100,9 +99,16 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
   });
 
   const { data: playerNameInfo } = useQuery<{ name: string }>({
-    queryKey: ['playerName', league, playerId],
-    queryFn: () => fetchPlayerName(league, playerId),
+    queryKey: ['playerName', league, playerId, season],
+    queryFn: () =>
+      fetchPlayerName(
+        league,
+        playerId,
+        season ? (season as string) : undefined,
+      ),
   });
+
+  console.log(playerNameInfo);
 
   const { data: playerInfo } = useQuery<PlayerInfo[] | GoalieInfo[]>({
     queryKey: ['playerInfo', league, playerId, playerTypeInfo?.playerType],
@@ -125,6 +131,22 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     queryKey: ['playerPortalID', league, playerId],
     queryFn: () => fetchPortalID(league, playerId),
   });
+
+  const filteredPortalID = useMemo(() => {
+    if (!playerPortalID || playerPortalID.length === 0) return [];
+
+    // if season is provided in the URL, treat that as the “current” one
+    if (season) {
+      const currentSeason = Number(season);
+      return playerPortalID.filter(
+        (entry) => entry.startSeason <= currentSeason,
+      );
+    }
+
+    // no season in the URL → assume “current” = the max startSeason
+    const maxSeason = Math.max(...playerPortalID.map((e) => e.startSeason));
+    return playerPortalID.filter((e) => e.startSeason === maxSeason);
+  }, [playerPortalID, season]);
 
   const { data: playerRatings } = useQuery<PlayerRatings[] | GoalieRatings[]>({
     queryKey: ['playerRatings', league, playerId, playerTypeInfo?.playerType],
@@ -220,16 +242,16 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                   {playerNameInfo?.name ?? 'Player'}
                 </div>
                 <div>
-                  {playerPortalID && playerPortalID.length > 0 && (
+                  {shouldShowIndexView && filteredPortalID.length > 0 && (
                     <div className="space-y-1 text-center">
-                      {playerPortalID.map((entry, idx) => {
+                      {filteredPortalID.map((entry, idx) => {
                         const firstSeason = entry.startSeason;
                         const matchingRating = (
                           playerRatings as PlayerRatings[] | GoalieRatings[]
-                        )?.find((rating) => rating.season === firstSeason);
+                        )?.find((r) => r.season === firstSeason);
                         const displayName =
                           matchingRating?.name ?? `Player ${idx + 1}`;
-                        const showName = playerPortalID.length > 1;
+                        const showName = filteredPortalID.length > 1;
 
                         return (
                           <div key={entry.playerUpdateID}>
