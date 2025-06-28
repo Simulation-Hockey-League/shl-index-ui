@@ -132,21 +132,17 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     queryFn: () => fetchPortalID(league, playerId),
   });
 
-  const filteredPortalID = useMemo(() => {
-    if (!playerPortalID || playerPortalID.length === 0) return [];
+  const currentSeason = useMemo(() => {
+    if (season) return Number(season);
 
-    // if season is provided in the URL, treat that as the “current” one
-    if (season) {
-      const currentSeason = Number(season);
-      return playerPortalID.filter(
-        (entry) => entry.startSeason <= currentSeason,
-      );
-    }
+    const maxStartSeason = playerPortalID?.map((e) => e.startSeason) ?? [];
+    return maxStartSeason.length ? Math.max(...maxStartSeason) : undefined;
+  }, [season, playerPortalID]);
 
-    // no season in the URL → assume “current” = the max startSeason
-    const maxSeason = Math.max(...playerPortalID.map((e) => e.startSeason));
-    return playerPortalID.filter((e) => e.startSeason === maxSeason);
-  }, [playerPortalID, season]);
+  const filteredPortalID = (playerPortalID ?? []).filter(
+    (entry) =>
+      currentSeason === undefined || entry.startSeason <= currentSeason,
+  );
 
   const { data: playerRatings } = useQuery<PlayerRatings[] | GoalieRatings[]>({
     queryKey: ['playerRatings', league, playerId, playerTypeInfo?.playerType],
@@ -244,28 +240,16 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                 <div>
                   {shouldShowIndexView && filteredPortalID.length > 0 && (
                     <div className="space-y-1 text-center">
-                      {filteredPortalID.map((entry, idx) => {
-                        const firstSeason = entry.startSeason;
-                        const matchingRating = (
-                          playerRatings as PlayerRatings[] | GoalieRatings[]
-                        )?.find((r) => r.season === firstSeason);
-                        const displayName =
-                          matchingRating?.name ?? `Player ${idx + 1}`;
-                        const showName = filteredPortalID.length > 1;
-
-                        return (
-                          <div key={entry.playerUpdateID}>
-                            <Link
-                              className="!text-blue600"
-                              href={`https://portal.simulationhockey.com/player/${entry.playerUpdateID}`}
-                              isExternal
-                            >
-                              {showName && <>{displayName} – </>}
-                              View in portal <ExternalLinkIcon mx="2px" />
-                            </Link>
-                          </div>
-                        );
-                      })}
+                      {filteredPortalID.map((entry) => (
+                        <Link
+                          key={entry.playerUpdateID}
+                          className="!text-blue600"
+                          href={`https://portal.simulationhockey.com/player/${entry.playerUpdateID}`}
+                          isExternal
+                        >
+                          View in portal <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      ))}
                     </div>
                   )}
                 </div>
