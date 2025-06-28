@@ -108,8 +108,6 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
       ),
   });
 
-  console.log(playerNameInfo);
-
   const { data: playerInfo } = useQuery<PlayerInfo[] | GoalieInfo[]>({
     queryKey: ['playerInfo', league, playerId, playerTypeInfo?.playerType],
     queryFn: () => {
@@ -132,17 +130,20 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     queryFn: () => fetchPortalID(league, playerId),
   });
 
-  const currentSeason = useMemo(() => {
-    if (season) return Number(season);
+  const filteredPortalID = useMemo(() => {
+    if (!playerPortalID || playerPortalID.length === 0) return [];
 
-    const maxStartSeason = playerPortalID?.map((e) => e.startSeason) ?? [];
-    return maxStartSeason.length ? Math.max(...maxStartSeason) : undefined;
-  }, [season, playerPortalID]);
+    if (season) {
+      const current = Number(season);
+      return playerPortalID.filter((entry) => entry.startSeason <= current);
+    }
 
-  const filteredPortalID = (playerPortalID ?? []).filter(
-    (entry) =>
-      currentSeason === undefined || entry.startSeason <= currentSeason,
-  );
+    const latest = playerPortalID.reduce(
+      (best, entry) => (entry.startSeason > best.startSeason ? entry : best),
+      playerPortalID[0],
+    );
+    return [latest];
+  }, [playerPortalID, season]);
 
   const { data: playerRatings } = useQuery<PlayerRatings[] | GoalieRatings[]>({
     queryKey: ['playerRatings', league, playerId, playerTypeInfo?.playerType],

@@ -22,13 +22,10 @@ export default async (
   ORDER BY SeasonID DESC
   LIMIT 1
   `);
-  console.log(search);
 
   const playerName = await query<{
     Name: string;
   }>(search);
-
-  console.log(playerName);
 
   if ('error' in playerName || playerName.length === 0) {
     res.status(400).json({ error: 'Server error' });
