@@ -41,3 +41,12 @@ export interface TableBehavioralFlags {
   enableFiltering: boolean;
   showTableFilterOptions: boolean;
 }
+
+export const AWARD_TABLE_FLAGS = (): TableBehavioralFlags => ({
+  stickyFirstColumn: false,
+  showTableFooter: false,
+  showCSVExportButton: false,
+  enablePagination: false,
+  enableFiltering: false,
+  showTableFilterOptions: false,
+});

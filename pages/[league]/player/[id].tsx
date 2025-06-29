@@ -1,4 +1,6 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
+  Link,
   Spinner,
   Tab,
   TabList,
@@ -8,11 +10,16 @@ import {
 } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
+import { PlayerAwards } from 'components/tables/PlayerAwardsTables';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { useTheme } from 'next-themes';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import {
+  InternalIndexPlayerID,
+  InternalPlayerAchievement,
+} from 'typings/portal-api';
 
 import { Footer } from '../../../components/Footer';
 import { Header } from '../../../components/Header';
@@ -31,7 +38,7 @@ import {
   PlayerWithAdvancedStats,
 } from '../../../typings/api';
 import { League, leagueNameToId } from '../../../utils/leagueHelpers';
-import { query } from '../../../utils/query';
+import { portalQuery, query } from '../../../utils/query';
 import { seasonTypeToApiFriendlyParam } from '../../../utils/seasonTypeHelpers';
 import { GoalieRatings } from '../../api/v1/goalies/ratings/[id]';
 import { SkaterRatings as PlayerRatings } from '../../api/v1/players/ratings/[id]';
@@ -42,17 +49,31 @@ const fetchPlayerType = (league: League, playerId: string) =>
       league,
     )}&playerId=${playerId}`,
   );
-const fetchPlayerName = (league: League, playerId: string) =>
+const fetchPlayerName = (league: League, playerId: string, seasonId?: string) =>
   query(
     `api/v2/player/playerName?league=${leagueNameToId(
       league,
-    )}&playerId=${playerId}`,
+    )}&playerId=${playerId}${seasonId ? `&seasonId=${seasonId}` : ''}`,
+  );
+
+const fetchPlayerAwards = (league: League, playerId: string) =>
+  portalQuery(
+    `api/v1/history/player?leagueID=${leagueNameToId(
+      league,
+    )}&fhmID=${playerId}`,
+  );
+
+const fetchPortalID = (league: League, playerId: string) =>
+  portalQuery(
+    `api/v1/player/index-ids?leagueID=${leagueNameToId(
+      league,
+    )}&indexID=${playerId}`,
   );
 
 export default ({ playerId, league }: { playerId: string; league: League }) => {
   const router = useRouter();
 
-  const { portalView } = router.query;
+  const { portalView, season } = router.query;
 
   const shouldShowIndexView = !portalView;
 
@@ -78,8 +99,13 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
   });
 
   const { data: playerNameInfo } = useQuery<{ name: string }>({
-    queryKey: ['playerName', league, playerId],
-    queryFn: () => fetchPlayerName(league, playerId),
+    queryKey: ['playerName', league, playerId, season],
+    queryFn: () =>
+      fetchPlayerName(
+        league,
+        playerId,
+        season ? (season as string) : undefined,
+      ),
   });
 
   const { data: playerInfo } = useQuery<PlayerInfo[] | GoalieInfo[]>({
@@ -94,6 +120,31 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     enabled: !!playerTypeInfo,
   });
 
+  const { data: playerAwards } = useQuery<InternalPlayerAchievement[]>({
+    queryKey: ['playerAwards', league, playerId],
+    queryFn: () => fetchPlayerAwards(league, playerId),
+  });
+
+  const { data: playerPortalID } = useQuery<InternalIndexPlayerID[]>({
+    queryKey: ['playerPortalID', league, playerId],
+    queryFn: () => fetchPortalID(league, playerId),
+  });
+
+  const filteredPortalID = useMemo(() => {
+    if (!playerPortalID || playerPortalID.length === 0) return [];
+
+    if (season) {
+      const current = Number(season);
+      return playerPortalID.filter((entry) => entry.startSeason <= current);
+    }
+
+    const latest = playerPortalID.reduce(
+      (best, entry) => (entry.startSeason > best.startSeason ? entry : best),
+      playerPortalID[0],
+    );
+    return [latest];
+  }, [playerPortalID, season]);
+
   const { data: playerRatings } = useQuery<PlayerRatings[] | GoalieRatings[]>({
     queryKey: ['playerRatings', league, playerId, playerTypeInfo?.playerType],
     queryFn: () => {
@@ -105,7 +156,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
         )}`,
       );
     },
-    enabled: !!playerTypeInfo?.playerType ,
+    enabled: !!playerTypeInfo?.playerType,
   });
 
   const { data: playerStats } = useQuery<PlayerWithAdvancedStats[] | Goalie[]>({
@@ -184,8 +235,24 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                   teamAbbreviation={playerInfo[0]?.team}
                   className="mt-10 size-40 md:mt-2.5"
                 />
-                <div className="text-3xl font-bold uppercase">
+                <div className=" group flex items-center gap-2 text-3xl font-bold uppercase">
                   {playerNameInfo?.name ?? 'Player'}
+                </div>
+                <div>
+                  {shouldShowIndexView && filteredPortalID.length > 0 && (
+                    <div className="space-y-1 text-center">
+                      {filteredPortalID.map((entry) => (
+                        <Link
+                          key={entry.playerUpdateID}
+                          className="!text-blue600"
+                          href={`https://portal.simulationhockey.com/player/${entry.playerUpdateID}`}
+                          isExternal
+                        >
+                          View in portal <ExternalLinkIcon mx="2px" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="text-center font-mont text-lg uppercase">
                   {'position' in playerInfo[0] ? playerInfo[0].position : 'G'} |{' '}
@@ -222,6 +289,16 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                 >
                   Ratings
                 </Tab>
+                {playerAwards && playerAwards.length > 0 && (
+                  <Tab
+                    _selected={{
+                      color: 'rgb(var(--hyperlink))',
+                      borderBottomColor: 'rgb(var(--hyperlink))',
+                    }}
+                  >
+                    Awards
+                  </Tab>
+                )}
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -278,6 +355,11 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                       }
                       type="player"
                     />
+                  )}
+                </TabPanel>
+                <TabPanel>
+                  {playerAwards && playerAwards.length > 0 && (
+                    <PlayerAwards playerAwards={playerAwards} />
                   )}
                 </TabPanel>
               </TabPanels>
