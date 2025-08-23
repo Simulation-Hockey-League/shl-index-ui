@@ -226,12 +226,8 @@ const getLogoId = (
             return { spriteId: 'LasVegasKings', isHistorical: true };
           }
         case 'POR':
-          if (season < 38) {
+          if (season < 37) {
             return { spriteId: 'PortlandAdmirals', isHistorical: true };
-          }
-        case 'TBH':
-          if (season < 11) {
-            return { spriteId: 'TampaBayHydras', isHistorical: true };
           }
         case 'WIS':
           if (season < 3) {
@@ -266,12 +262,12 @@ const getLogoId = (
             return { spriteId: 'AnaheimPreS49', isHistorical: true };
           }
           if (season < 59) {
-            return 'AnaheimOld';
+            return { spriteId: 'AnaheimPreS59', isHistorical: true };
           }
           return 'Anaheim';
         case 'ANC':
           if (season < 61) {
-            return 'AnchorageOld';
+            return { spriteId: 'AnchoragePreS61', isHistorical: true };
           }
           return 'Anchorage';
         case 'CAR':
@@ -281,7 +277,7 @@ const getLogoId = (
             return { spriteId: 'ColoradoPreS41', isHistorical: true };
           }
           if (season < 58) {
-            return 'ColoradoOld';
+            return { spriteId: 'ColoradoPreS58', isHistorical: true };
           }
           return 'Colorado';
         case 'DET':
@@ -303,7 +299,7 @@ const getLogoId = (
           return 'Maine';
         case 'NBB':
           if (season < 60) {
-            return 'NevadaOld';
+            return { spriteId: 'NevadaPreS60', isHistorical: true };
           }
           return 'Nevada';
         case 'NL':
@@ -327,7 +323,7 @@ const getLogoId = (
             return { spriteId: 'StLouisPreS45', isHistorical: true };
           }
           if (season < 55) {
-            return 'St_LouisOld';
+            return { spriteId: 'St_LouisPreS55', isHistorical: true };
           }
           return 'St_Louis';
         case 'TBW':
@@ -341,6 +337,9 @@ const getLogoId = (
           }
           return 'Vancouver';
         case 'YUM':
+          if (season < 84) {
+            return { spriteId: 'YukonPreS84', isHistorical: true };
+          }
           return 'Yukon';
         // defunct teams
         case 'CHI':
