@@ -88,6 +88,7 @@ export default async (
       season: player.SeasonID,
       name: player['Last Name'],
       team: player.Abbr,
+      teamID: player.TeamID,
       position: player.position,
       height: player.Height,
       weight: player.Weight,

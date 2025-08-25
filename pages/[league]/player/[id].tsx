@@ -241,11 +241,13 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
             </div>
             {shouldShowIndexView && (
               <div className="my-2.5 flex flex-col items-center justify-center space-y-5">
-                <TeamLogo
-                  league={league}
-                  teamAbbreviation={playerInfo[0]?.team}
-                  className="mt-10 size-40 md:mt-2.5"
-                />
+                <Link href={`/${league}/team/${playerInfo[0].teamID}`}>
+                  <TeamLogo
+                    league={league}
+                    teamAbbreviation={playerInfo[0]?.team}
+                    className="mt-10 size-40 md:mt-2.5"
+                  />
+                </Link>
                 <div className=" group flex items-center gap-2 text-3xl font-bold uppercase">
                   {playerNameInfo?.name ?? 'Player'}
                 </div>
