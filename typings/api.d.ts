@@ -35,6 +35,7 @@ export type Player = {
   gameRating: number;
   offensiveGameRating: number;
   defensiveGameRating: number;
+  teamID: number;
 };
 
 export type PlayerInfo = {
@@ -44,6 +45,7 @@ export type PlayerInfo = {
   season: number;
   weight: number;
   team: string;
+  teamID: number;
   position: 'C' | 'LW' | 'RW' | 'LD' | 'RD';
 };
 
@@ -84,6 +86,7 @@ export type Goalie = {
   shutouts: number;
   savePct: number;
   gameRating: number;
+  teamID: number;
 };
 
 export type GoalieInfo = {
@@ -93,6 +96,7 @@ export type GoalieInfo = {
   season: number;
   weight: number;
   team: string;
+  teamID: number;
 };
 
 export type Team = {

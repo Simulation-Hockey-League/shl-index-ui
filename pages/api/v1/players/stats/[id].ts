@@ -129,6 +129,7 @@ export default async (
         FFPct: player.FFPct,
         FFPctRel: player.FFPctRel,
       },
+      teamID: player.TeamID,
     };
   });
 

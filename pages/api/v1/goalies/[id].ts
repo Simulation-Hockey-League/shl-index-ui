@@ -13,6 +13,7 @@ const cors = Cors({
 interface MasterPlayer {
   PlayerID: number;
   Abbr: string;
+  TeamID: number;
   FranchiseID: number;
   LeagueID: number;
   SeasonID: number;
@@ -62,6 +63,7 @@ const getPlayerInfo = (player: MasterPlayer) => ({
   season: player.SeasonID,
   name: player['Last Name'],
   team: player.Abbr,
+  teamID: player.TeamID,
   position: player.position,
   height: player.Height,
   weight: player.Weight,
