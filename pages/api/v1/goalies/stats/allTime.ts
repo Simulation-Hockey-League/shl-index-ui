@@ -34,6 +34,7 @@ export default async (
     sort,
     startSeason,
     endSeason,
+    teamID,
   } = req.query;
 
   let type: string;
@@ -83,6 +84,7 @@ export default async (
         startSeason != null ? SQL` AND s.SeasonID >= ${+startSeason} ` : '',
       )
       .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
+      .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
       .append(SQL`
       GROUP BY s.PlayerID, s.LeagueID`).append(`
       ORDER BY ${sortSql};
