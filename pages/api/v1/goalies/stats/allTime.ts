@@ -46,49 +46,6 @@ export default async (
   }
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.wins;
-
-  const goalieString = SQL`
-      SELECT 
-        s.PlayerID,
-        s.LeagueID,
-        MAX(p.\`Last Name\`) AS Name,
-        COUNT(DISTINCT s.SeasonID) AS Seasons,
-        SUM(s.GP) AS GP,
-        SUM(s.Minutes) AS Minutes,
-        SUM(s.Wins) AS Wins,
-        SUM(s.Losses) AS Losses,
-        SUM(s.OT) AS OT,
-        SUM(s.ShotsAgainst) AS ShotsAgainst,
-        SUM(s.Saves) AS Saves,
-        SUM(s.GoalsAgainst) AS GoalsAgainst,
-        AVG(s.GAA) AS GAA,
-        SUM(s.Shutouts) AS Shutouts,
-        AVG(s.SavePct) AS SavePct,
-        AVG(s.GameRating) AS GameRating
-      FROM `
-    .append(`player_goalie_stats_${type} AS s`)
-    .append(
-      SQL`
-      INNER JOIN player_master AS p
-        ON s.SeasonID = p.SeasonID
-       AND s.LeagueID = p.LeagueID
-       AND s.PlayerID = p.PlayerID
-      INNER JOIN corrected_player_ratings AS r
-        ON s.SeasonID = r.SeasonID
-       AND s.LeagueID = r.LeagueID
-       AND s.PlayerID = r.PlayerID
-      WHERE s.LeagueID = ${+league}
-      `,
-    )
-    .append(startSeason != null ? SQL` AND s.SeasonID >= ${+startSeason} ` : '')
-    .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
-    .append(SQL`
-      GROUP BY s.PlayerID, s.LeagueID
-      ORDER BY ${sortSql};
-      `);
-
-  console.log(goalieString);
-
   const goalieStats = await query(
     SQL`
       SELECT 
