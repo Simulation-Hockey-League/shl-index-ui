@@ -318,3 +318,21 @@ export type Goalie_Boxscore = {
   PIM: number;
   descision: boolean;
 };
+
+export type TeamInfo = {
+  id: number;
+  league: number;
+  name: string;
+  nickname: string;
+  seasons?: number;
+  season?: number;
+  wins: number;
+  losses: number;
+  overtimeLosses: number;
+  shootoutWins: number;
+  shootoutLosses: number;
+  points: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  winPercent: number;
+};

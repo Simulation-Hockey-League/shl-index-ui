@@ -1966,6 +1966,257 @@
         }
       }
     },
+    "/players/stats/allTime": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Get Player All-Time Career Stats",
+        "description": "Returns career statistics for players across multiple seasons. Can be filtered by team, position, and season range.",
+        "operationId": "getPlayerAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "default": "regular",
+            "enum": ["'preseason', 'regular', or 'playoffs'"],
+            "description": "'Pre-Season', 'Regular Season', or 'Playoffs'"
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "type": "string",
+            "description": "Filter by position",
+            "enum": ["forward", "defenseman"]
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "teamID",
+            "in": "query",
+            "type": "number",
+            "description": "Filter by teamID"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort options",
+            "enum": [
+              "points,goals,assists,gamesPlayed,pim,hits,blocks,fights,fightWins,faceoffs,faceoffWins,ppGoals,ppAssists,ppPoints,shGoals,shAssists,shPoints,timeOnIce,giveaways,takeaways,plusMinus,shots"
+            ]
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "minGames",
+            "in": "query",
+            "type": "number",
+            "description": "Minimum games played to be included in results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number",
+            "description": "Limit the number of results returned"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "description": "True/False, returns aggregated stats or season by season"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/playerstats"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goalies/stats/allTime": {
+      "get": {
+        "tags": ["goalies"],
+        "summary": "Get Goalie All-Time Career Stats",
+        "description": "Returns career statistics for goalies across multiple seasons. Can be filtered by team and season range.",
+        "operationId": "getGoalieAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "default": "regular",
+            "enum": ["'preseason', 'regular', or 'playoffs'"],
+            "description": "'Pre-Season', 'Regular Season', or 'Playoffs'"
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "teamID",
+            "in": "query",
+            "type": "number",
+            "description": "Filter by teamID"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort options",
+            "enum": [
+              "wins,losses,ot,goalsAgainst,shutouts,savePct,gaa,minutes,gamesPlayed"
+            ]
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "minGames",
+            "in": "query",
+            "type": "number",
+            "description": "Minimum games played to be included in results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number",
+            "description": "Limit the number of results returned"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "description": "True/False, returns aggregated stats or season by season"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/goaliestats"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/teams/allTime": {
+      "get": {
+        "tags": ["team"],
+        "summary": "Get Team All-Time Stats",
+        "description": "Returns team statistics aggregated across multiple seasons. Can be filtered by season range.",
+        "operationId": "getTeamAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort by field (points,wins,losses,overtimelosses,goalsFor,goalsAgainst,winPercentage)"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "description": "True/False, returns aggregated stats or season by season"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/standings"
+              }
+            }
+          }
+        }
+      }
+    },
     "/fantasy": {
       "get": {
         "tags": ["fantasy"],
