@@ -27,13 +27,13 @@ export type TeamInfo = {
 };
 
 const SORTABLE_COLUMNS: Record<string, string> = {
-  points: 's.points DESC',
-  wins: 's.wins DESC',
-  losses: 's.losses DESC',
-  overtimeLosses: 's.overtimeLosses DESC',
-  goalsFor: 's.goalsFor DESC',
-  goalsAgainst: 's.goalsAgainst ASC',
-  winPercent: 's.winPercent DESC',
+  points: 's.points',
+  wins: 's.wins',
+  losses: 's.losses',
+  overtimeLosses: 's.overtimeLosses',
+  goalsFor: 's.goalsFor',
+  goalsAgainst: 's.goalsAgainst',
+  winPercent: 's.winPercent',
 };
 
 export default async (
@@ -42,9 +42,22 @@ export default async (
 ): Promise<void> => {
   await use(req, res, cors);
 
-  const { league = 0, sort, startSeason, endSeason } = req.query;
+  const {
+    league = 0,
+    sort,
+    order = 'desc',
+    startSeason,
+    endSeason,
+  } = req.query;
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.points;
+
+  let orderSql: string;
+  if (order === 'asc') {
+    orderSql = 'ASC';
+  } else {
+    orderSql = 'DESC';
+  }
 
   const search = SQL`
 SELECT
@@ -95,7 +108,7 @@ INNER JOIN (
 ) t
   ON s.TeamID = t.TeamID
   AND s.LeagueID = t.LeagueID`).append(`
-ORDER BY ${sortSql};
+ORDER BY ${sortSql} ${orderSql};
 `);
 
   const teams = await query(search);
