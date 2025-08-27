@@ -11,26 +11,26 @@ const cors = Cors({
 });
 
 const SORTABLE_COLUMNS: Record<string, string> = {
-  points: 'Points DESC',
-  goals: 'G DESC',
-  assists: 'A DESC',
-  gamesPlayed: 'GP DESC',
-  pim: 'PIM DESC',
-  hits: 'Hits DESC',
-  blocks: 'Blocks DESC',
-  fights: 'Fights DESC',
-  fightWins: 'Fights_Won DESC',
-  faceoffs: 'FO DESC',
-  faceoffWins: 'FOW DESC',
-  ppGoals: 'PPG DESC',
-  ppAssists: 'PPA DESC',
-  ppPoints: 'PPG + PPA DESC',
-  shGoals: 'SHG DESC',
-  shAssists: 'SHA DESC',
-  shPoints: 'SHG + SHA DESC',
-  timeOnIce: 'TOI DESC',
-  giveaways: 'GvA DESC',
-  takeaways: 'TkA DESC',
+  points: 'Points',
+  goals: 'G',
+  assists: 'A',
+  gamesPlayed: 'GP',
+  pim: 'PIM',
+  hits: 'Hits',
+  blocks: 'Blocks',
+  fights: 'Fights',
+  fightWins: 'Fights_Won',
+  faceoffs: 'FO',
+  faceoffWins: 'FOW',
+  ppGoals: 'PPG',
+  ppAssists: 'PPA',
+  ppPoints: 'PPP',
+  shGoals: 'SHG',
+  shAssists: 'SHA',
+  shPoints: 'SHPoints',
+  timeOnIce: 'TOI',
+  giveaways: 'GvA',
+  takeaways: 'TkA',
 };
 
 export type SeasonType = string;
@@ -45,10 +45,12 @@ export default async (
     league = 0,
     type: longType = 'regular',
     position,
-    sort = 'points',
+    sort,
+    order = 'desc',
     startSeason,
     endSeason,
     teamID,
+    minGP,
   } = req.query;
 
   let type: string;
@@ -58,6 +60,12 @@ export default async (
     type = 'po';
   } else {
     type = 'rs';
+  }
+  let orderSql: string;
+  if (order === 'asc') {
+    orderSql = 'ASC';
+  } else {
+    orderSql = 'DESC';
   }
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.points;
@@ -125,11 +133,9 @@ export default async (
             endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '',
           )
           .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
-          .append(
-            SQL`
-  GROUP BY s.PlayerID, s.LeagueID`,
-          )
-          .append(` ORDER BY ${sortSql} `),
+          .append(SQL` GROUP BY s.PlayerID, s.LeagueID`)
+          .append(minGP != null ? SQL` HAVING SUM(s.GP) >= ${+minGP} ` : '')
+          .append(` ORDER BY ${sortSql} ${orderSql} `),
       ),
   );
 

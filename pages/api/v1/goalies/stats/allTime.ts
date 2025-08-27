@@ -11,15 +11,15 @@ const cors = Cors({
 });
 
 const SORTABLE_COLUMNS: Record<string, string> = {
-  wins: 'Wins DESC',
-  losses: 'Losses DESC',
-  ot: 'OT DESC',
-  goalsAgainst: 'GoalsAgainst ASC',
-  shutouts: 'Shutouts DESC',
-  savePct: 'SavePct DESC',
-  gaa: 'GAA ASC',
-  minutes: 'Minutes DESC',
-  gamesPlayed: 'GP DESC',
+  wins: 'Wins',
+  losses: 'Losses',
+  ot: 'OT',
+  goalsAgainst: 'GoalsAgainst',
+  shutouts: 'Shutouts',
+  savePct: 'SavePct',
+  gaa: 'GAA',
+  minutes: 'Minutes',
+  gamesPlayed: 'GP',
 };
 
 export default async (
@@ -32,9 +32,11 @@ export default async (
     league = 0,
     type: longType = 'regular',
     sort,
+    order = 'desc',
     startSeason,
     endSeason,
     teamID,
+    minGP,
   } = req.query;
 
   let type: string;
@@ -44,6 +46,13 @@ export default async (
     type = 'po';
   } else {
     type = 'rs';
+  }
+
+  let orderSql: string;
+  if (order === 'asc') {
+    orderSql = 'ASC';
+  } else {
+    orderSql = 'DESC';
   }
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.wins;
@@ -64,7 +73,7 @@ export default async (
         SUM(s.GoalsAgainst) AS GoalsAgainst,
         AVG(s.GAA) AS GAA,
         SUM(s.Shutouts) AS Shutouts,
-        AVG(s.SavePct) AS SavePct,
+        AVG(s.SavePct) AS SavePct
       FROM `
       .append(`player_goalie_stats_${type} AS s`)
       .append(
@@ -85,11 +94,11 @@ export default async (
       )
       .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
       .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
-      .append(SQL`
-      GROUP BY s.PlayerID, s.LeagueID`).append(`
-      ORDER BY ${sortSql};
-      `),
+      .append(SQL` GROUP BY s.PlayerID, s.LeagueID`)
+      .append(minGP != null ? SQL` HAVING SUM(s.GP) >= ${+minGP} ` : '')
+      .append(` ORDER BY ${sortSql} ${orderSql};`),
   );
+  console.log(goalieStats);
 
   const parsed = [...goalieStats].map((player) => {
     return {
