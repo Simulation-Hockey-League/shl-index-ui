@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>SHL API Documentation</title>
-    <!-- needed for adaptive design -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -10,19 +9,150 @@
       rel="stylesheet"
     />
     <link rel="shortcut icon" href="/league_logos/SHL.svg" />
-
-    <!--
-    ReDoc doesn't change outer page styles
-    -->
     <style>
       body {
         margin: 0;
         padding: 0;
+        font-family: Roboto, sans-serif;
+      }
+      .version-selector {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #2d3748;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .version-selector select {
+        padding: 8px 16px;
+        font-size: 16px;
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        background: #1a202c;
+        color: white;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+      .version-selector label {
+        color: white;
+        font-weight: 500;
+      }
+      #redoc-container {
+        margin-top: 60px;
+      }
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        color: #666;
+        font-size: 16px;
       }
     </style>
   </head>
   <body>
-    <redoc spec-url="swagger.json"></redoc>
+    <div class="version-selector">
+      <label for="version">API Version:</label>
+      <select id="version" onchange="changeVersion(this.value)">
+        <option value="v1">Version 1</option>
+        <option value="v2">Version 2</option>
+        <option value="v3">Version 3</option>
+      </select>
+    </div>
+    <div id="redoc-container"></div>
     <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <script>
+      let containerCounter = 0;
+
+      async function initDocs(version) {
+        const specs = {
+          v1: 'swagger.json',
+          v2: 'swagger-v2.json',
+          v3: 'swagger-v3.json',
+        };
+
+        try {
+          history.replaceState(null, null, '#' + version);
+          const mainContainer = document.getElementById('redoc-container');
+
+          mainContainer.innerHTML =
+            '<div class="loading">Loading API documentation...</div>';
+          const response = await fetch(specs[version]);
+          if (!response.ok) {
+            throw new Error(`Failed to load spec: ${response.status}`);
+          }
+          const spec = await response.json();
+
+          containerCounter++;
+          const newContainer = document.createElement('div');
+          newContainer.id = `redoc-instance-${containerCounter}`;
+
+          mainContainer.innerHTML = '';
+          mainContainer.appendChild(newContainer);
+
+          await Redoc.init(
+            spec,
+            {
+              scrollYOffset: 60, // Height of our version selector
+              theme: {
+                colors: {
+                  primary: {
+                    main: '#2d3748',
+                  },
+                },
+              },
+            },
+            newContainer,
+          );
+        } catch (err) {
+          console.error('Failed to load API spec:', err);
+          const container = document.getElementById('redoc-container');
+          container.innerHTML = `
+            <div class="loading" style="color: #e53e3e;">
+              Error loading API documentation: ${err.message}
+            </div>
+          `;
+        }
+      }
+
+      async function changeVersion(version) {
+        // Disable the select while loading
+        const select = document.getElementById('version');
+        select.disabled = true;
+
+        try {
+          // Initialize docs with new version
+          await initDocs(version);
+        } finally {
+          // Re-enable the select
+          select.disabled = false;
+        }
+      }
+
+      // Initial load
+      window.addEventListener('load', function () {
+        const hash = window.location.hash.slice(1);
+        const version = ['v1', 'v2', 'v3'].includes(hash) ? hash : 'v1';
+        document.getElementById('version').value = version;
+        initDocs(version);
+      });
+
+      // Handle browser back/forward navigation
+      window.addEventListener('hashchange', function () {
+        const hash = window.location.hash.slice(1);
+        if (['v1', 'v2', 'v3'].includes(hash)) {
+          const select = document.getElementById('version');
+          if (select.value !== hash) {
+            select.value = hash;
+            initDocs(hash);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
