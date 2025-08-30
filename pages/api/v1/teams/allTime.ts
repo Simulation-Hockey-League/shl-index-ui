@@ -113,6 +113,11 @@ ORDER BY ${sortSql} ${orderSql};
 
   const teams = await query(search);
 
+  if ('error' in teams) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
   if (teams.length === 0) {
     res.status(404).json({ message: 'No teams found' });
     return;

@@ -139,6 +139,16 @@ export default async (
       ),
   );
 
+  if ('error' in playerStats) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
+  if (playerStats.length === 0) {
+    res.status(200).json([]);
+    return;
+  }
+
   const parsed = [...playerStats].map((player) => {
     return {
       id: player.PlayerID,

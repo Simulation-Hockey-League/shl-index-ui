@@ -98,7 +98,16 @@ export default async (
       .append(minGP != null ? SQL` HAVING SUM(s.GP) >= ${+minGP} ` : '')
       .append(` ORDER BY ${sortSql} ${orderSql};`),
   );
-  console.log(goalieStats);
+
+  if ('error' in goalieStats) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
+  if (goalieStats.length === 0) {
+    res.status(200).json([]);
+    return;
+  }
 
   const parsed = [...goalieStats].map((player) => {
     return {
