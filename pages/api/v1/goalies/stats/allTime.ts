@@ -37,6 +37,7 @@ export default async (
     endSeason,
     teamID,
     minGP,
+    limit,
   } = req.query;
 
   let type: string;
@@ -96,7 +97,8 @@ export default async (
       .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
       .append(SQL` GROUP BY s.PlayerID, s.LeagueID`)
       .append(minGP != null ? SQL` HAVING SUM(s.GP) >= ${+minGP} ` : '')
-      .append(` ORDER BY ${sortSql} ${orderSql};`),
+      .append(` ORDER BY ${sortSql} ${orderSql}`)
+      .append(limit != null ? SQL` LIMIT ${+limit};` : SQL`;`),
   );
 
   if ('error' in goalieStats) {

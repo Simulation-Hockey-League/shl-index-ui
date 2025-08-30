@@ -11,26 +11,28 @@ const cors = Cors({
 });
 
 const SORTABLE_COLUMNS: Record<string, string> = {
-  points: 'Points',
-  goals: 'G',
-  assists: 'A',
-  gamesPlayed: 'GP',
-  pim: 'PIM',
-  hits: 'Hits',
-  blocks: 'Blocks',
-  fights: 'Fights',
-  fightWins: 'Fights_Won',
-  faceoffs: 'FO',
-  faceoffWins: 'FOW',
-  ppGoals: 'PPG',
-  ppAssists: 'PPA',
-  ppPoints: 'PPP',
-  shGoals: 'SHG',
-  shAssists: 'SHA',
-  shPoints: 'SHPoints',
-  timeOnIce: 'TOI',
-  giveaways: 'GvA',
-  takeaways: 'TkA',
+  points: 'SUM(s.G) + SUM(s.A)',
+  goals: 'SUM(s.G)',
+  assists: 'SUM(s.A)',
+  gamesPlayed: 'SUM(s.GP)',
+  pim: 'SUM(s.PIM)',
+  hits: 'SUM(s.HIT)',
+  blocks: 'SUM(s.SB)',
+  fights: 'SUM(s.Fights)',
+  fightWins: 'SUM(s.Fights_Won)',
+  faceoffs: 'SUM(s.FO)',
+  faceoffWins: 'SUM(s.FOW)',
+  ppGoals: 'SUM(s.PPG)',
+  ppAssists: 'SUM(s.PPA)',
+  ppPoints: 'SUM(s.PPG + s.PPA)',
+  shGoals: 'SUM(s.SHG)',
+  shAssists: 'SUM(s.SHA)',
+  shPoints: 'SUM(s.SHG + s.SHA)',
+  timeOnIce: 'SUM(s.TOI)',
+  giveaways: 'SUM(s.GvA)',
+  takeaways: 'SUM(s.TkA)',
+  plusMinus: 'SUM(s.PlusMinus)',
+  shots: 'SUM(s.SOG)',
 };
 
 export type SeasonType = string;
@@ -51,6 +53,7 @@ export default async (
     endSeason,
     teamID,
     minGP,
+    limit,
   } = req.query;
 
   let type: string;
@@ -68,7 +71,11 @@ export default async (
     orderSql = 'DESC';
   }
 
-  const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.points;
+  const sortSql = SORTABLE_COLUMNS[sort];
+  if (!sortSql) {
+    res.status(400).json({ error: 'Invalid sort option. See API for options' });
+    return;
+  }
   const playerStats = await query(
     SQL`
   SELECT 
@@ -88,6 +95,7 @@ export default async (
       SUM(s.SB) AS Blocks,
       SUM(s.Fights) AS Fights,
       SUM(s.Fights_Won) AS Fights_Won,
+      SUM(s.PlusMinus) AS PlusMinus,
       SUM(s.PIM) AS PIM,
       SUM(s.PPG) AS PPG,
       SUM(s.PPA) AS PPA,
@@ -135,7 +143,8 @@ export default async (
           .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
           .append(SQL` GROUP BY s.PlayerID, s.LeagueID`)
           .append(minGP != null ? SQL` HAVING SUM(s.GP) >= ${+minGP} ` : '')
-          .append(` ORDER BY ${sortSql} ${orderSql} `),
+          .append(` ORDER BY ${sortSql} ${orderSql} `)
+          .append(limit != null ? SQL` LIMIT ${+limit} ` : ''),
       ),
   );
 
