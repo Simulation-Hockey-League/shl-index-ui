@@ -71,6 +71,15 @@ export default async (
     orderSql = 'DESC';
   }
 
+  if (startSeason != null && !validateSeason(startSeason as string)) {
+    res.status(400).json({ error: 'Invalid startSeason format' });
+    return;
+  }
+  if (endSeason != null && !validateSeason(endSeason as string)) {
+    res.status(400).json({ error: 'Invalid endSeason format' });
+    return;
+  }
+
   const sortSql = SORTABLE_COLUMNS[sort];
   if (!sortSql) {
     res.status(400).json({ error: 'Invalid sort option. See API for options' });
