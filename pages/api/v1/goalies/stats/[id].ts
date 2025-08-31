@@ -92,6 +92,7 @@ export default async (
       shutouts: player.Shutouts,
       savePct: player.SavePct.toFixed(3),
       gameRating: player.GameRating,
+      teamID: player.TeamID,
     };
   });
 
