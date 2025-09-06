@@ -363,7 +363,10 @@ const getLogoId = (
           if (season < 34) {
             return { spriteId: 'MontrealPreS34', isHistorical: true };
           }
-          return { spriteId: 'MontrealPreS45', isHistorical: true };
+          if (season < 45) {
+            return { spriteId: 'MontrealPreS45', isHistorical: true };
+          }
+          return { spriteId: 'MontrealPreS49', isHistorical: true };
         default:
           return 'SMJHL';
       }
