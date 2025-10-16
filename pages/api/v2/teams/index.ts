@@ -14,30 +14,13 @@ export type TeamInfo = {
   id: number;
   season: number;
   league: number;
-  conference: number;
-  division?: number;
   name: string;
   abbreviation: string;
   location: string;
-  nameDetails: {
-    first: string;
-    second: string;
-  };
   colors: {
     primary: string;
     secondary: string;
     text: string;
-  };
-  stats: {
-    wins: number;
-    losses: number;
-    overtimeLosses: number;
-    shootoutWins: number;
-    shootoutLosses: number;
-    points: number;
-    goalsFor: number;
-    goalsAgainst: number;
-    winPercent: number;
   };
 };
 
@@ -54,8 +37,7 @@ export default async (
   let search;
   if (!Number.isNaN(+seasonid)) {
     search = SQL`
-      SELECT t.TeamID, t.LeagueID, t.SeasonID, t.Name, t.Nickname, t.Abbr, t.PrimaryColor, t.SecondaryColor, t.TextColor, t.ConferenceID, t.DivisionID, 
-             s.Wins, s.Losses, s.OTL, s.SOW, s.SOL, s.Points, s.GF, s.GA, s.PCT
+      SELECT t.TeamID, t.LeagueID, t.SeasonID, t.Name, t.Nickname, t.Abbr, t.PrimaryColor, t.SecondaryColor, t.TextColor
       FROM team_data AS t
       INNER JOIN team_records AS s
         ON t.TeamID = s.TeamID
@@ -66,8 +48,7 @@ export default async (
     `);
   } else {
     search = SQL`
-      SELECT t.TeamID, t.LeagueID, t.SeasonID, t.Name, t.Nickname, t.Abbr, t.PrimaryColor, t.SecondaryColor, t.TextColor, t.ConferenceID, t.DivisionID, 
-             s.Wins, s.Losses, s.OTL, s.SOW, s.SOL, s.Points, s.GF, s.GA, s.PCT
+      SELECT t.TeamID, t.LeagueID, t.SeasonID, t.Name, t.Nickname, t.Abbr, t.PrimaryColor, t.SecondaryColor, t.TextColor
       FROM team_data AS t
       INNER JOIN team_records AS s
         ON t.TeamID = s.TeamID
@@ -104,32 +85,14 @@ export default async (
   const parsed = teams.map((team) => ({
     id: team.TeamID,
     season: team.SeasonID,
-    league: team.LeagueID,
-    conference: team.ConferenceID,
-    division: team.DivisionID === -1 ? undefined : team.DivisionID,
     name: `${team.Name} ${team.Nickname}`,
     abbreviation: team.Abbr,
     location:
       team.LeagueID === 2 || team.LeagueID === 3 ? team.Nickname : team.Name,
-    nameDetails: {
-      first: team.Name,
-      second: team.Nickname,
-    },
     colors: {
       primary: team.PrimaryColor,
       secondary: team.SecondaryColor,
       text: team.TextColor,
-    },
-    stats: {
-      wins: team.Wins,
-      losses: team.Losses,
-      overtimeLosses: team.OTL,
-      shootoutWins: team.SOW,
-      shootoutLosses: team.SOL,
-      points: team.Points,
-      goalsFor: team.GF,
-      goalsAgainst: team.GA,
-      winPercent: team.PCT.toFixed(3),
     },
   }));
 
