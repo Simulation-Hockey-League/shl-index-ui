@@ -50,3 +50,18 @@ export const AWARD_TABLE_FLAGS = (): TableBehavioralFlags => ({
   enableFiltering: false,
   showTableFilterOptions: false,
 });
+
+export const TABLE_BOXSCORE_FLAGS = ({
+  playerType,
+  data,
+}: {
+  playerType: 'skater' | 'goalie';
+  data: 'scoring' | 'ratings' | 'adv';
+}): TableBehavioralFlags => ({
+  stickyFirstColumn: false,
+  showTableFooter: data === 'scoring',
+  showCSVExportButton: true,
+  showTableFilterOptions: playerType !== 'goalie',
+  enablePagination: false,
+  enableFiltering: false,
+});

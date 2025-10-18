@@ -10,7 +10,9 @@ import {
 } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
+import { GoalieBoxscoreTable } from 'components/tables/GoalieBoxscoreTable';
 import { PlayerAwards } from 'components/tables/PlayerAwardsTables';
+import { SkaterBoxscoreTable } from 'components/tables/SkaterBoxscoreTable';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
@@ -194,6 +196,15 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     parent.postMessage(contentHeight ?? 0, '*');
   }, [isLoading, shouldShowIndexView]);
 
+  const seasonList = useMemo(() => {
+    if (!playerStats) return [];
+    return Array.from(
+      new Set(playerStats.map((statsEntry) => statsEntry.season)),
+    )
+      .filter((season) => season >= 66)
+      .sort((a, b) => b - a);
+  }, [playerStats]);
+
   return (
     <>
       <NextSeo
@@ -261,8 +272,8 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                 </div>
               </div>
             )}
-            <Tabs>
-              <TabList>
+            <Tabs isLazy>
+              <TabList flexWrap="wrap">
                 <Tab
                   _selected={{
                     color: 'rgb(var(--hyperlink))',
@@ -288,6 +299,14 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                   }}
                 >
                   Ratings
+                </Tab>
+                <Tab
+                  _selected={{
+                    color: 'rgb(var(--hyperlink))',
+                    borderBottomColor: 'rgb(var(--hyperlink))',
+                  }}
+                >
+                  Game Logs
                 </Tab>
                 {playerAwards && playerAwards.length > 0 && (
                   <Tab
@@ -354,6 +373,30 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                         >
                       }
                       type="player"
+                    />
+                  )}
+                </TabPanel>
+                <TabPanel>
+                  {playerTypeInfo?.playerType === 'skater' && (
+                    <SkaterBoxscoreTable
+                      playerID={playerId}
+                      league={league}
+                      type={type}
+                      seasonList={seasonList}
+                      selectedSeason={
+                        Array.isArray(season) ? season[0] : season
+                      }
+                    />
+                  )}
+                  {playerTypeInfo?.playerType === 'goalie' && (
+                    <GoalieBoxscoreTable
+                      playerID={playerId}
+                      league={league}
+                      type={type}
+                      seasonList={seasonList}
+                      selectedSeason={
+                        Array.isArray(season) ? season[0] : season
+                      }
                     />
                   )}
                 </TabPanel>

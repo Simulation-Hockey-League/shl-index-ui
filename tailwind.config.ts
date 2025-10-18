@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import mapValues from 'lodash/mapValues';
 import type { Config } from 'tailwindcss';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import type { PluginAPI } from 'tailwindcss/types/config';
@@ -29,7 +29,7 @@ export const themeDefsPlugin = ({ addUtilities, e }: PluginAPI) => {
 };
 
 const colorPalette = <Key extends keyof typeof colorsRaw>(key: Key) =>
-  _.mapValues(colorsRaw[key], (value) => {
+  mapValues(colorsRaw[key], (value) => {
     return `rgba(${value} / <alpha-value>)`;
   }) as (typeof colorsRaw)[Key];
 
