@@ -84,6 +84,7 @@ export default async (
 
   const parsed = teams.map((team) => ({
     id: team.TeamID,
+    league: team.LeagueID,
     season: team.SeasonID,
     name: `${team.Name} ${team.Nickname}`,
     abbreviation: team.Abbr,
