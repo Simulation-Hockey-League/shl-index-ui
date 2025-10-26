@@ -89,6 +89,31 @@ export const SkaterScoreTable = ({
                 columnHelper.accessor('team', {
                   enableGlobalFilter: false,
                   header: () => <TableHeader title="Team">Team</TableHeader>,
+                  cell: (props) => {
+                    const cellValue = props.getValue();
+                    if (type === 'player') {
+                      return (
+                        <Link
+                          href={{
+                            pathname: '/[league]/team/[id]',
+                            query: {
+                              league: router.query.league,
+                              id: props.row.original.teamID,
+                              season: props.row.original.season,
+                            },
+                          }}
+                          className="inline-block w-full max-w-[100px] truncate text-center leading-none text-blue600"
+                        >
+                          {cellValue}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <span className="inline-block w-full max-w-[100px] truncate text-center leading-none">
+                        {cellValue}
+                      </span>
+                    );
+                  },
                 }),
               ]
             : []),
