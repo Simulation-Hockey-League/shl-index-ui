@@ -216,7 +216,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
       {shouldShowIndexView && <Header league={league} activePage="players" />}
       <div
         className={classnames(
-          'mx-auto w-full bg-primary',
+          'bg-primary mx-auto w-full',
           shouldShowIndexView && 'p-[2.5%] lg:w-3/4 lg:px-0 lg:pb-10 lg:pt-px',
         )}
       >
@@ -241,7 +241,10 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
             </div>
             {shouldShowIndexView && (
               <div className="my-2.5 flex flex-col items-center justify-center space-y-5">
-                <Link href={`/${league}/team/${playerInfo[0].teamID}`}>
+                <Link
+                  href={`/${league}/team/${playerInfo[0].teamID}`}
+                  aria-label={`View ${playerInfo[0].team}'s page`}
+                >
                   <TeamLogo
                     league={league}
                     teamAbbreviation={playerInfo[0]?.team}
@@ -267,7 +270,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                     </div>
                   )}
                 </div>
-                <div className="text-center font-mont text-lg uppercase">
+                <div className="font-mont text-center text-lg uppercase">
                   {'position' in playerInfo[0] ? playerInfo[0].position : 'G'} |{' '}
                   {Math.floor(playerInfo[0].height / 12)} ft{' '}
                   {playerInfo[0].height % 12} in | {playerInfo[0].weight} lbs
