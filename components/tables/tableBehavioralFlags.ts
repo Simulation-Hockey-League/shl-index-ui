@@ -51,17 +51,20 @@ export const AWARD_TABLE_FLAGS = (): TableBehavioralFlags => ({
   showTableFilterOptions: false,
 });
 
-export const TABLE_BOXSCORE_FLAGS = ({
-  playerType,
-  data,
-}: {
-  playerType: 'skater' | 'goalie';
-  data: 'scoring' | 'ratings' | 'adv';
-}): TableBehavioralFlags => ({
+export const BOXSCORE_SKATER_TABLE_FLAGS: TableBehavioralFlags = {
   stickyFirstColumn: false,
-  showTableFooter: data === 'scoring',
+  showTableFooter: true,
   showCSVExportButton: true,
-  showTableFilterOptions: playerType !== 'goalie',
+  showTableFilterOptions: true,
   enablePagination: false,
   enableFiltering: false,
-});
+};
+
+export const BOXSCORE_GOALIE_TABLE_FLAGS: TableBehavioralFlags = {
+  stickyFirstColumn: false,
+  showTableFooter: false,
+  showCSVExportButton: true,
+  showTableFilterOptions: false,
+  enablePagination: false,
+  enableFiltering: false,
+};

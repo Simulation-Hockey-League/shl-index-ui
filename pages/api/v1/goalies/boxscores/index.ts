@@ -112,10 +112,9 @@ WHERE
   if (id) {
     baseQuery.append(SQL` AND bgs.playerID = ${id}`);
   }
-  if (teamID) {
+  if (teamID != null) {
     baseQuery.append(SQL` AND bgs.teamId = ${teamID}`);
   }
-
   baseQuery.append(SQL` ORDER BY bgs.gameID DESC`);
 
   const parsed = await query(baseQuery);

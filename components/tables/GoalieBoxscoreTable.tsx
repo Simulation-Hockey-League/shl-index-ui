@@ -17,7 +17,7 @@ import { onlyIncludeSeasonAndTypeInQuery } from '../../utils/routingHelpers';
 import { Link } from '../common/Link';
 
 import { Table } from './Table';
-import { TABLE_BOXSCORE_FLAGS } from './tableBehavioralFlags';
+import { BOXSCORE_GOALIE_TABLE_FLAGS } from './tableBehavioralFlags';
 import { TableHeader } from './TableHeader';
 
 const columnHelper = createColumnHelper<Goalie_Boxscore>();
@@ -35,7 +35,6 @@ export const GoalieBoxscoreTable = ({
   seasonList: number[];
   selectedSeason?: string;
 }) => {
-  console.log('in here');
   const useSeason =
     selectedSeason && Number(selectedSeason) >= 66
       ? Number(selectedSeason)
@@ -43,8 +42,6 @@ export const GoalieBoxscoreTable = ({
 
   const router = useRouter();
   const [season, setSeason] = useState<number>(useSeason);
-
-  leagueNameToId;
   const { data: goalieBoxScoreStats, isLoading: goalieBoxScoreStatsIsLoading } =
     useQuery<Goalie_Boxscore[]>({
       queryKey: ['goalieBoxScoreStats', league, playerID, type, season],
@@ -187,10 +184,7 @@ export const GoalieBoxscoreTable = ({
       </Select>
       <Table<Goalie_Boxscore>
         table={table}
-        tableBehavioralFlags={TABLE_BOXSCORE_FLAGS({
-          playerType: 'goalie',
-          data: 'scoring',
-        })}
+        tableBehavioralFlags={BOXSCORE_GOALIE_TABLE_FLAGS}
         label={`${type}_goalie_stats_boxscores`}
       />
     </>

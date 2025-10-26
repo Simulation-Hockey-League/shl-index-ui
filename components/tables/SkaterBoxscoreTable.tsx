@@ -22,7 +22,7 @@ import {
   calculateColumnSumForColumnID,
 } from './shared';
 import { Table } from './Table';
-import { TABLE_BOXSCORE_FLAGS } from './tableBehavioralFlags';
+import { BOXSCORE_SKATER_TABLE_FLAGS } from './tableBehavioralFlags';
 import { TableHeader } from './TableHeader';
 
 const columnHelper = createColumnHelper<Skater_Boxscore>();
@@ -403,10 +403,7 @@ export const SkaterBoxscoreTable = ({
       </Select>
       <Table<Skater_Boxscore>
         table={table}
-        tableBehavioralFlags={TABLE_BOXSCORE_FLAGS({
-          playerType: 'skater',
-          data: 'scoring',
-        })}
+        tableBehavioralFlags={BOXSCORE_SKATER_TABLE_FLAGS}
         label={`${type}_skater_stats_boxscores`}
       />
     </>

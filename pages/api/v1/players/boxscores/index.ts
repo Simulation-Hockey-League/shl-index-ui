@@ -142,7 +142,7 @@ export default async (
   if (id) {
     baseQuery.append(SQL` AND bss.playerID = ${id}`);
   }
-  if (teamID) {
+  if (teamID != null) {
     baseQuery.append(SQL` AND bss.teamId = ${teamID}`);
   }
 
