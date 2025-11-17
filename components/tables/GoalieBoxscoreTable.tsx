@@ -177,7 +177,7 @@ export const GoalieBoxscoreTable = ({
         {seasonList
           .sort((a, b) => b - a)
           .map((s) => (
-            <option key={s} value={s}>
+            <option className="!bg-primary" key={s} value={s}>
               Season {s}
             </option>
           ))}
