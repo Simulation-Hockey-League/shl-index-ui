@@ -82,6 +82,16 @@ export default async (
 
   const teams = await query(search);
 
+  if ('error' in teams) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
+  if (teams.length === 0) {
+    res.status(200).json([]);
+    return;
+  }
+
   const parsed = teams.map((team) => ({
     id: team.TeamID,
     league: team.LeagueID,

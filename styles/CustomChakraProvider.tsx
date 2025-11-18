@@ -82,6 +82,17 @@ export const chakraTheme: Partial<ChakraTheme> = {
         },
       },
     },
+    Radio: {
+      baseStyle: {
+        control: {
+          borderWidth: '1px',
+          borderColor: colors.border.secondary,
+          _dark: {
+            borderColor: colors.border.primary,
+          },
+        },
+      },
+    },
   },
   styles: {
     global: () => ({

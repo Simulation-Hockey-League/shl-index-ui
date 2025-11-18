@@ -19,6 +19,6 @@ export const portalQuery = async (uri: string) => {
 };
 
 export const validateSeason = (season: string): boolean => {
-  const seasonRegex = /^\d{2,3}$/; // rip season 1000
+  const seasonRegex = /^\d{1,3}$/; // rip season 1000
   return seasonRegex.test(season);
 };

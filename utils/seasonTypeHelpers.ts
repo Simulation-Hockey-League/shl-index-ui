@@ -1,3 +1,5 @@
+import { SeasonTypeOption } from 'hooks/useSeasonType';
+
 import { SeasonType } from '../pages/api/v1/schedule';
 
 import { assertUnreachable } from './assertUnreachable';
@@ -19,3 +21,16 @@ export const seasonTypeToStatsTableSuffix = (
 
 export const seasonTypeToApiFriendlyParam = (type: SeasonType) =>
   type.toLowerCase().replace('-', '');
+
+export const seasonTypeToTextFriendly = (type: SeasonTypeOption) => {
+  switch (type) {
+    case 'pre':
+      return 'Pre-Season';
+    case 'regular':
+      return 'Regular Season';
+    case 'playoffs':
+      return 'Playoffs';
+    default:
+      return assertUnreachable(type);
+  }
+};

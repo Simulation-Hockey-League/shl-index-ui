@@ -68,3 +68,12 @@ export const BOXSCORE_GOALIE_TABLE_FLAGS: TableBehavioralFlags = {
   enablePagination: false,
   enableFiltering: false,
 };
+
+export const HISTORY_TABLE_FLAGS: TableBehavioralFlags = {
+  stickyFirstColumn: false,
+  showTableFooter: true,
+  showCSVExportButton: true,
+  showTableFilterOptions: false,
+  enablePagination: true,
+  enableFiltering: true,
+};

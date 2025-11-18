@@ -15,3 +15,7 @@ export const shouldShowDivision = (
     (league === 'smjhl' && !!season && season < 76 && season > 53)
   );
 };
+
+export const leagueIDToName = (league: number): League | null => {
+  return leagues[league] ?? null;
+};
