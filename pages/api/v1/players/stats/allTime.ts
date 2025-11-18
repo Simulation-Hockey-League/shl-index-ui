@@ -56,6 +56,7 @@ export default async (
     minGP,
     limit,
     grouped = 'true',
+    active = 'false',
   } = req.query;
 
   let type: string;
@@ -212,7 +213,7 @@ export default async (
       .append(limit != null ? SQL` LIMIT ${+limit} ` : ''),
   );
 
-  const playerStats = await query(playerString);
+  let playerStats = await query(playerString);
 
   const activePlayers = await query(SQL`
     SELECT PlayerID
@@ -236,6 +237,12 @@ export default async (
   if (playerStats.length === 0) {
     res.status(200).json([]);
     return;
+  }
+
+  if (active === 'true') {
+    playerStats = playerStats.filter((player) =>
+      activePlayerSet.has(player.PlayerID),
+    );
   }
 
   const parsed = [...playerStats].map((player) => {

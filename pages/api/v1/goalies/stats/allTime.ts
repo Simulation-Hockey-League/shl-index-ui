@@ -40,6 +40,7 @@ export default async (
     minGP,
     limit,
     grouped = 'true',
+    active = 'false',
   } = req.query;
 
   let type: string;
@@ -150,7 +151,7 @@ export default async (
     .append(` ORDER BY ${sortSql} ${orderSql}`)
     .append(limit != null ? SQL` LIMIT ${+limit};` : SQL`;`);
 
-  const goalieStats = await query(goalieString);
+  let goalieStats = await query(goalieString);
 
   const activePlayers = await query(SQL`
       SELECT PlayerID
@@ -174,6 +175,12 @@ export default async (
   if (goalieStats.length === 0) {
     res.status(200).json([]);
     return;
+  }
+
+  if (active === 'true') {
+    goalieStats = goalieStats.filter((player) =>
+      activePlayerSet.has(player.PlayerID),
+    );
   }
 
   const parsed = [...goalieStats].map((player) => {
