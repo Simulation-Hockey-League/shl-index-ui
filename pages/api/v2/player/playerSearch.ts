@@ -46,5 +46,5 @@ export default async (
     return;
   }
 
-  res.status(200).json({ playerName });
+  res.status(200).json(playerName);
 };
