@@ -41,6 +41,7 @@ export default async (
     limit,
     grouped = 'true',
     active = 'false',
+    playerID,
   } = req.query;
 
   let type: string;
@@ -78,7 +79,6 @@ export default async (
        
   `;
   if (isGrouped) {
-    console.log('Grouping goalie stats');
     goalieString.append(
       SQL`
        MAX(p.\`Last Name\`) AS Name,
@@ -98,7 +98,6 @@ export default async (
       FROM `,
     );
   } else {
-    console.log('Not grouping goalie stats');
     goalieString.append(
       SQL`
        p.\`Last Name\` AS Name,
@@ -140,6 +139,7 @@ export default async (
     .append(startSeason != null ? SQL` AND s.SeasonID >= ${+startSeason} ` : '')
     .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
     .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
+    .append(playerID != null ? SQL` AND s.PlayerID = ${+playerID} ` : '')
     .append(isGrouped ? SQL` GROUP BY s.PlayerID, s.LeagueID` : '')
     .append(
       isGrouped && minGP != null

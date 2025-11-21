@@ -57,6 +57,7 @@ export default async (
     limit,
     grouped = 'true',
     active = 'false',
+    playerID,
   } = req.query;
 
   let type: string;
@@ -201,6 +202,7 @@ export default async (
       )
       .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
       .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
+      .append(playerID != null ? SQL` AND s.PlayerID = ${+playerID} ` : '')
       .append(isGrouped ? SQL` GROUP BY s.PlayerID, s.LeagueID` : '')
       .append(
         isGrouped && minGP != null
