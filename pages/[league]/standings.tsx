@@ -43,9 +43,11 @@ export default ({ league }: { league: League }) => {
       const displayParam =
         type !== 'Playoffs' ? `&display=${tabs[currentActiveTab]}` : '';
       const seasonParam = season ? `&season=${season}` : '';
+      const apiEndpoint =
+        type === 'Playoffs' && (season == null || season >= 84) ? 'v2' : 'v1';
 
       return query(
-        `api/v1/${endpoint}?league=${leagueNameToId(
+        `api/${apiEndpoint}/${endpoint}?league=${leagueNameToId(
           league,
         )}${displayParam}${seasonParam}`,
       );
