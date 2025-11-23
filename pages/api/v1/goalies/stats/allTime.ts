@@ -53,13 +53,6 @@ export default async (
     type = 'rs';
   }
 
-  let orderSql: string;
-  if (order === 'asc') {
-    orderSql = 'ASC';
-  } else {
-    orderSql = 'DESC';
-  }
-
   if (startSeason != null && !validateSeason(startSeason as string)) {
     res.status(400).json({ error: 'Invalid startSeason format' });
     return;
@@ -70,6 +63,7 @@ export default async (
   }
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.wins;
+  const orderDirection = order === 'asc' ? 'ASC' : 'DESC';
   const isGrouped = grouped === 'true';
 
   const goalieString = SQL`
@@ -148,10 +142,20 @@ export default async (
         ? SQL` AND s.GP >= ${+minGP} `
         : '',
     )
-    .append(` ORDER BY ${sortSql} ${orderSql}`)
+    .append(` ORDER BY ${sortSql} ${orderDirection}`)
     .append(limit != null ? SQL` LIMIT ${+limit};` : SQL`;`);
 
   let goalieStats = await query(goalieString);
+
+  if ('error' in goalieStats) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
+  if (goalieStats.length === 0) {
+    res.status(200).json([]);
+    return;
+  }
 
   const activePlayers = await query(SQL`
       SELECT PlayerID
@@ -166,16 +170,6 @@ export default async (
   }
 
   const activePlayerSet = new Set(activePlayers.map((p) => p.PlayerID));
-
-  if ('error' in goalieStats) {
-    res.status(500).send('Server Connection Failed');
-    return;
-  }
-
-  if (goalieStats.length === 0) {
-    res.status(200).json([]);
-    return;
-  }
 
   if (active === 'true') {
     goalieStats = goalieStats.filter((player) =>

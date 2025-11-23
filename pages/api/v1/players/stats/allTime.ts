@@ -68,12 +68,6 @@ export default async (
   } else {
     type = 'rs';
   }
-  let orderSql: string;
-  if (order === 'asc') {
-    orderSql = 'ASC';
-  } else {
-    orderSql = 'DESC';
-  }
 
   if (startSeason != null && !validateSeason(startSeason as string)) {
     res.status(400).json({ error: 'Invalid startSeason format' });
@@ -85,12 +79,9 @@ export default async (
   }
 
   const sortSql = SORTABLE_COLUMNS[sort] || SORTABLE_COLUMNS.points;
-  if (!sortSql) {
-    res.status(400).json({ error: 'Invalid sort option. See API for options' });
-    return;
-  }
-
+  const orderDirection = order === 'asc' ? 'ASC' : 'DESC';
   const isGrouped = grouped === 'true';
+
   const playerString = SQL`
     SELECT 
     s.PlayerID,
@@ -211,11 +202,23 @@ export default async (
           ? SQL` AND s.GP >= ${+minGP} `
           : '',
       )
-      .append(` ORDER BY ${sortSql} ${orderSql} `)
+      .append(` ORDER BY ${sortSql} ${orderDirection} `)
       .append(limit != null ? SQL` LIMIT ${+limit} ` : ''),
   );
 
+  console.log(playerString);
+
   let playerStats = await query(playerString);
+
+  if ('error' in playerStats) {
+    res.status(500).send('Server Connection Failed');
+    return;
+  }
+
+  if (playerStats.length === 0) {
+    res.status(200).json([]);
+    return;
+  }
 
   const activePlayers = await query(SQL`
     SELECT PlayerID
@@ -230,16 +233,6 @@ export default async (
   }
 
   const activePlayerSet = new Set(activePlayers.map((p) => p.PlayerID));
-
-  if ('error' in playerStats) {
-    res.status(500).send('Server Connection Failed');
-    return;
-  }
-
-  if (playerStats.length === 0) {
-    res.status(200).json([]);
-    return;
-  }
 
   if (active === 'true') {
     playerStats = playerStats.filter((player) =>

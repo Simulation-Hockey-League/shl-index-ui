@@ -18,6 +18,14 @@
     {
       "name": "schedule",
       "description": "Game schedule and stats"
+    },
+    {
+      "name": "players",
+      "description": "playerName and playerSearch"
+    },
+    {
+      "name": "standings",
+      "description": "updated playoffs"
     }
   ],
   "schemes": ["https", "http"],
@@ -49,9 +57,6 @@
             "schema": {
               "$ref": "#/definitions/BoxscoreSummary"
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -97,9 +102,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -134,9 +136,6 @@
                 "$ref": "#/definitions/BoxscorePenalty"
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -206,9 +205,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -267,9 +263,6 @@
                 "$ref": "#/definitions/Game"
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -296,9 +289,6 @@
             "schema": {
               "$ref": "#/definitions/GamePreviewData"
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -333,9 +323,6 @@
                 "$ref": "#/definitions/BoxscoreScoring"
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -402,9 +389,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -450,14 +434,119 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/player/playerName": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Gets name of the player by ID",
+        "description": "returns player name",
+        "operationId": "getPlayerName",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "type": "number"
           },
-          "400": {
-            "description": "Missing arguments or server error"
+          {
+            "name": "league",
+            "in": "query",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "seasonId",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/playerName"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/player/playerSearch": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Gets all player names of a league",
+        "description": "returns player names",
+        "operationId": "getPlayerSearch",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "isGoalie",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/playerSearch"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/standings/playoffs": {
+      "get": {
+        "tags": ["standings"],
+        "summary": "List Playoff Bracket",
+        "description": "Returns Playoff Bracket by League",
+        "operationId": "getPlayoffsByLeague",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0
+          },
+          {
+            "name": "season",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/playoffs"
+              }
+            }
           }
         }
       }
     }
   },
+
   "definitions": {
     "BoxscoreSummary": {
       "type": "object",
@@ -963,6 +1052,85 @@
         "minutesPlayed": {
           "type": "string",
           "example": "60:00"
+        }
+      }
+    },
+    "playerName": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 123
+        },
+        "name": {
+          "type": "string",
+          "example": "John Smith"
+        }
+      }
+    },
+    "playerSearch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 123
+        },
+        "name": {
+          "type": "string",
+          "example": "John Smith"
+        }
+      }
+    },
+    "playoffs": {
+      "type": "object",
+      "properties": {
+        "team1": {
+          "type": "number",
+          "example": 3
+        },
+        "team2": {
+          "type": "number",
+          "example": 12
+        },
+        "LeagueID": {
+          "type": "number",
+          "example": 0
+        },
+        "SeasonID": {
+          "type": "number",
+          "example": 58
+        },
+        "team1Wins": {
+          "type": "number",
+          "example": 4
+        },
+        "team2Wins": {
+          "type": "number",
+          "example": 3
+        },
+        "team1_Name": {
+          "type": "string",
+          "example": "Toronto"
+        },
+        "team1_Nickname": {
+          "type": "string",
+          "example": "North Stars"
+        },
+        "team1_Abbr": {
+          "type": "string",
+          "example": "TOR"
+        },
+        "team2_Name": {
+          "type": "string",
+          "example": "San Francisco"
+        },
+        "team2_Nickname": {
+          "type": "string",
+          "example": "Pride"
+        },
+        "team2_Abbr": {
+          "type": "string",
+          "example": "SFP"
         }
       }
     }

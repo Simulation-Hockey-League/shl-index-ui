@@ -49,9 +49,6 @@
             "schema": {
               "$ref": "#/definitions/BoxscoreSummary"
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -97,9 +94,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -134,9 +128,6 @@
                 "$ref": "#/definitions/BoxscoreScoring"
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
@@ -182,9 +173,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing arguments or server error"
           }
         }
       }
