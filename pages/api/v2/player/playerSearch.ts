@@ -12,7 +12,7 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> => {
-  const { league, isGoalie = 'false' } = req.query;
+  const { league, isGoalie } = req.query;
 
   if (!league) {
     res.status(400).json({ error: 'Missing leagueID' });
@@ -32,10 +32,12 @@ export default async (
     AND pm.TeamID >= 0
 `;
 
-  if (goalieFlag) {
-    search.append(SQL` AND pr.G = 20`);
-  } else {
-    search.append(SQL` AND pr.G != 20`);
+  if (isGoalie !== undefined) {
+    if (goalieFlag) {
+      search.append(SQL` AND pr.G = 20`);
+    } else {
+      search.append(SQL` AND pr.G != 20`);
+    }
   }
 
   search.append(SQL` GROUP BY pm.PlayerID`);
