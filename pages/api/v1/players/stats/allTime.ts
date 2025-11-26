@@ -206,8 +206,6 @@ export default async (
       .append(limit != null ? SQL` LIMIT ${+limit} ` : ''),
   );
 
-  console.log(playerString);
-
   let playerStats = await query(playerString);
 
   if ('error' in playerStats) {
