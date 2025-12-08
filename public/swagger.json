@@ -1966,6 +1966,286 @@
         }
       }
     },
+    "/players/stats/allTime": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Get Player All-Time Career Stats",
+        "description": "Returns career statistics for players across multiple seasons. Can be filtered by team, position, and season range.",
+        "operationId": "getPlayerAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "default": "regular",
+            "enum": ["'preseason', 'regular', or 'playoffs'"],
+            "description": "'Pre-Season', 'Regular Season', or 'Playoffs'"
+          },
+          {
+            "name": "position",
+            "in": "query",
+            "type": "string",
+            "description": "Filter by position",
+            "enum": ["forward", "defenseman"]
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "teamID",
+            "in": "query",
+            "type": "number",
+            "description": "Filter by teamID"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort options",
+            "enum": [
+              "points,goals,assists,gamesPlayed,pim,hits,blocks,fights,fightWins,faceoffs,faceoffWins,ppGoals,ppAssists,ppPoints,shGoals,shAssists,shPoints,timeOnIce,giveaways,takeaways,plusMinus,shots"
+            ]
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "minGP",
+            "in": "query",
+            "type": "number",
+            "description": "Minimum games played to be included in results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number",
+            "description": "Limit the number of results returned"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "enum": [true, false],
+            "description": "Returns aggregated stats or season by season"
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "type": "boolean",
+            "enum": [true, false],
+            "description": "Returns only active players"
+          },
+          {
+            "name": "playerID",
+            "in": "query",
+            "type": "number",
+            "description": "PlayerID you want to see"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/playerAllTimeGrouped"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goalies/stats/allTime": {
+      "get": {
+        "tags": ["goalies"],
+        "summary": "Get Goalie All-Time Career Stats",
+        "description": "Returns career statistics for goalies across multiple seasons. Can be filtered by team and season range.",
+        "operationId": "getGoalieAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "default": "regular",
+            "enum": ["'preseason', 'regular', or 'playoffs'"],
+            "description": "'Pre-Season', 'Regular Season', or 'Playoffs'"
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "teamID",
+            "in": "query",
+            "type": "number",
+            "description": "Filter by teamID"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort options",
+            "enum": [
+              "wins,losses,ot,goalsAgainst,shutouts,savePct,gaa,minutes,gamesPlayed"
+            ]
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "minGP",
+            "in": "query",
+            "type": "number",
+            "description": "Minimum games played to be included in results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number",
+            "description": "Limit the number of results returned"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "enum": [true, false],
+            "description": "Returns aggregated stats or season by season"
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "type": "boolean",
+            "enum": [true, false],
+            "description": "Returns only active players"
+          },
+          {
+            "name": "playerID",
+            "in": "query",
+            "type": "number",
+            "description": "PlayerID you want to see"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/goalieAllTimeGrouped"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/teams/allTime": {
+      "get": {
+        "tags": ["team"],
+        "summary": "Get Team All-Time Stats",
+        "description": "Returns team statistics aggregated across multiple seasons. Can be filtered by season range.",
+        "operationId": "getTeamAllTimeStats",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "query",
+            "type": "number",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "description": "League ID to filter by"
+          },
+          {
+            "name": "seasonStart",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "seasonEnd",
+            "in": "query",
+            "type": "number",
+            "description": "Start season for the aggregate data"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "description": "Sort by field (points,wins,losses,overtimelosses,goalsFor,goalsAgainst,winPercentage)"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Sort direction"
+          },
+          {
+            "name": "grouped",
+            "in": "query",
+            "type": "boolean",
+            "enum": [true, false],
+            "description": "Returns aggregated stats or season by season"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/standings"
+              }
+            }
+          }
+        }
+      }
+    },
     "/fantasy": {
       "get": {
         "tags": ["fantasy"],
@@ -3838,6 +4118,127 @@
         "fantasyPoints": {
           "type": "number",
           "example": 588.2
+        }
+      }
+    },
+    "playerAllTimeGrouped": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "number", "example": 3356 },
+        "name": { "type": "string", "example": "Sean Davies" },
+        "league": { "type": "number", "example": 0 },
+        "teamAbbr": { "type": "string", "example": "NEW" },
+        "seasons": { "type": "number", "example": 10 },
+        "gamesPlayed": { "type": "number", "example": 660 },
+        "goals": { "type": "number", "example": 54 },
+        "assists": { "type": "number", "example": 239 },
+        "points": { "type": "number", "example": 293 },
+        "plusMinus": { "type": "number", "example": 374 },
+        "pim": { "type": "number", "example": 425 },
+        "shotsOnGoal": { "type": "number", "example": 1126 },
+        "hits": { "type": "number", "example": 672 },
+        "shotsBlocked": { "type": "number", "example": 1655 },
+        "giveaways": { "type": "number", "example": 116 },
+        "takeaways": { "type": "number", "example": 482 },
+        "timeOnIce": { "type": "number", "example": 782401 },
+        "evTimeOnIce": { "type": "number", "example": 683670 },
+        "ppTimeOnIce": { "type": "number", "example": 18128 },
+        "shTimeOnIce": { "type": "number", "example": 80603 },
+        "ppGoals": { "type": "number", "example": 5 },
+        "ppAssists": { "type": "number", "example": 10 },
+        "ppPoints": { "type": "number", "example": 15 },
+        "shGoals": { "type": "number", "example": 2 },
+        "shAssists": { "type": "number", "example": 35 },
+        "shPoints": { "type": "number", "example": 37 },
+        "evGoals": { "type": "number", "example": 47 },
+        "evAssists": { "type": "number", "example": 194 },
+        "evPoints": { "type": "number", "example": 241 },
+        "fights": { "type": "number", "example": 0 },
+        "fightWins": { "type": "number", "example": 0 },
+        "fightLosses": { "type": "number", "example": 0 },
+        "stillActive": { "type": "boolean", "example": false }
+      }
+    },
+    "goalieAllTimeGrouped": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "grouped",
+          "description": "Indicates this is grouped all-time goalie data"
+        },
+        "id": {
+          "type": "number",
+          "example": 1827
+        },
+        "name": {
+          "type": "string",
+          "example": "Jeff Newman"
+        },
+        "position": {
+          "type": "string",
+          "example": "G"
+        },
+        "league": {
+          "type": "number",
+          "example": 1
+        },
+        "seasons": {
+          "type": "number",
+          "example": 4
+        },
+        "teamAbbr": {
+          "type": "string",
+          "example": "DET"
+        },
+        "gamesPlayed": {
+          "type": "number",
+          "example": 233
+        },
+        "minutes": {
+          "type": "number",
+          "example": 13603
+        },
+        "wins": {
+          "type": "number",
+          "example": 157
+        },
+        "losses": {
+          "type": "number",
+          "example": 68
+        },
+        "ot": {
+          "type": "number",
+          "example": 7,
+          "description": "Overtime losses"
+        },
+        "shotsAgainst": {
+          "type": "number",
+          "example": 5920
+        },
+        "saves": {
+          "type": "number",
+          "example": 5294
+        },
+        "goalsAgainst": {
+          "type": "number",
+          "example": 626
+        },
+        "gaa": {
+          "type": "string",
+          "example": "2.77"
+        },
+        "shutouts": {
+          "type": "number",
+          "example": 29
+        },
+        "savePct": {
+          "type": "string",
+          "example": "0.894"
+        },
+        "stillActive": {
+          "type": "boolean",
+          "example": false
         }
       }
     }

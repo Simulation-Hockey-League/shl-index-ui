@@ -10,7 +10,6 @@
       rel="stylesheet"
     />
     <link rel="shortcut icon" href="/league_logos/SHL.svg" />
-
     <!--
     ReDoc doesn't change outer page styles
     -->
@@ -19,10 +18,62 @@
         margin: 0;
         padding: 0;
       }
+      .version-selector {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #263238;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 100;
+      }
+      .version-selector label {
+        color: white;
+        margin-right: 10px;
+      }
+      .version-selector select {
+        padding: 5px 10px;
+        font-size: 14px;
+      }
+      #redoc-container {
+        margin-top: 50px;
+      }
     </style>
   </head>
   <body>
-    <redoc spec-url="swagger.json"></redoc>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <div class="version-selector">
+      <label for="version">API Version:</label>
+      <select id="version">
+        <option value="swagger.json">Version 1</option>
+        <option value="swagger-v2.json">Version 2</option>
+        <option value="swagger-v3.json">Version 3</option>
+      </select>
+    </div>
+    <div id="redoc-container"></div>
+    <script src="https://unpkg.com/redoc@latest/bundles/redoc.standalone.js"></script>
+    <script>
+      function loadSpec(specUrl) {
+        const container = document.getElementById('redoc-container');
+        container.innerHTML = '';
+        Redoc.init(
+          specUrl,
+          {
+            scrollYOffset: 50,
+          },
+          container,
+        );
+      }
+
+      document
+        .getElementById('version')
+        .addEventListener('change', function (e) {
+          loadSpec(e.target.value);
+        });
+
+      loadSpec(document.getElementById('version').value);
+    </script>
   </body>
 </html>
