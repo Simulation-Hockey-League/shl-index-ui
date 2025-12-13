@@ -1,6 +1,7 @@
 import { FormLabel, Radio, RadioGroup, Spinner, Stack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
+import { ComparisonCareerChart } from 'components/history/ComparisonCareerChart';
 import { HistoryHeader } from 'components/history/historyHeader';
 import { PlayerComparisonCard } from 'components/history/PlayerComparisonCard';
 import { PlayerSearchInput } from 'components/history/SelectPlayerSearch';
@@ -202,6 +203,17 @@ export default function PlayerComparisonPage() {
                   playersData={playersData}
                   isGoalie={filters.isGoalie}
                 />
+                <div className="hidden md:block">
+                  <h2 className="mb-4 text-center text-2xl font-bold ">
+                    Career Progression
+                  </h2>
+
+                  <ComparisonCareerChart
+                    players={players}
+                    playersData={playersData}
+                    isGoalie={filters.isGoalie}
+                  />
+                </div>
               </div>
             )}
           </>

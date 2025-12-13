@@ -88,6 +88,17 @@ export default function TeamsPage() {
                     />
                   )}
                 </div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={filters.grouped}
+                    onChange={(e) =>
+                      updateFilters({ grouped: e.target.checked })
+                    }
+                    className="size-4 rounded border-primary"
+                  />
+                  <span className="text-xs font-medium">Sum Results</span>
+                </label>
 
                 <div className="flex-1">
                   <SeasonRangeSelector

@@ -119,7 +119,7 @@ export const TeamHistoryTable = ({
             sortDescFirst: true,
           }),
           columnHelper.accessor('winPercent', {
-            header: () => <TableHeader title="winPercent">win%</TableHeader>,
+            header: () => <TableHeader title="winPercent">Win%</TableHeader>,
             enableGlobalFilter: false,
             sortDescFirst: true,
           }),

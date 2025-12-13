@@ -108,6 +108,7 @@ export function usePlayerComparison({
     careerStats,
     seasonStats,
     availableSeasons,
+    allSeasonStats,
     isLoading: !careerStats && !!playerId,
   };
 }
