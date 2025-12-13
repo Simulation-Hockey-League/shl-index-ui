@@ -4,9 +4,9 @@ import { Squash as Hamburger } from 'hamburger-react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { ColorModeSwitcher } from '../../components/ColorModeSwitcher';
-import { Link } from '../../components/common/Link';
 import Back from '../../public/back.svg';
+import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { Link } from '../common/Link';
 
 const tabs = [
   { key: 'players', label: 'Players', href: '/history/players' },

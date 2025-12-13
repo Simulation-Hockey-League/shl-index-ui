@@ -2,7 +2,7 @@ import { FormLabel, Radio, RadioGroup, Spinner, Stack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
 import { ComparisonCareerChart } from 'components/history/ComparisonCareerChart';
-import { HistoryHeader } from 'components/history/historyHeader';
+import { HistoryHeader } from 'components/history/HistoryHeader';
 import { PlayerComparisonCard } from 'components/history/PlayerComparisonCard';
 import { PlayerSearchInput } from 'components/history/SelectPlayerSearch';
 import { LeagueRadios } from 'components/LeagueRadios';

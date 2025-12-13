@@ -1,7 +1,7 @@
 import { FormLabel, Spinner } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
-import { HistoryHeader } from 'components/history/historyHeader';
+import { HistoryHeader } from 'components/history/HistoryHeader';
 import { LeagueRadios } from 'components/LeagueRadios';
 import {
   PositionTypeOption,
@@ -9,8 +9,8 @@ import {
 } from 'components/PositionTypeSelector';
 import { SeasonRangeSelector } from 'components/SeasonRangeSelector';
 import { SeasonTypeRadios } from 'components/SeasonTypeRadios';
-import { GoalieHistoryTable } from 'components/tables/history/goalieHistoryTable';
-import { SkaterHistoryTable } from 'components/tables/history/skaterHistoryTable';
+import { GoalieHistoryTable } from 'components/tables/history/GoalieHistoryTable';
+import { SkaterHistoryTable } from 'components/tables/history/SkaterHistoryTable';
 import { TeamSelector } from 'components/TeamSelector';
 import { useHistoryFilters } from 'hooks/useHistoryFilters';
 import { useSeason } from 'hooks/useSeason';

@@ -1,5 +1,5 @@
 import { Footer } from 'components/Footer';
-import { HistoryHeader } from 'components/history/historyHeader';
+import { HistoryHeader } from 'components/history/HistoryHeader';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import React, { useEffect } from 'react';

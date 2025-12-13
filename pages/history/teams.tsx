@@ -1,10 +1,10 @@
 import { FormLabel, Spinner } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
-import { HistoryHeader } from 'components/history/historyHeader';
+import { HistoryHeader } from 'components/history/HistoryHeader';
 import { LeagueRadios } from 'components/LeagueRadios';
 import { SeasonRangeSelector } from 'components/SeasonRangeSelector';
-import { TeamHistoryTable } from 'components/tables/history/teamHistoryTable';
+import { TeamHistoryTable } from 'components/tables/history/TeamHistoryTable';
 import { TeamSelector } from 'components/TeamSelector';
 import { useHistoryFilters } from 'hooks/useHistoryFilters';
 import { useSeason } from 'hooks/useSeason';
