@@ -4,6 +4,7 @@ import React from 'react';
 import { Link } from '../components/common/Link';
 import IIHFLogo from '../public/league_logos/IIHF.svg';
 import SHLLogo from '../public/league_logos/SHL.svg';
+import HistoryLogo from '../public/league_logos/SHLHISTORY.svg';
 import SMJHLLogo from '../public/league_logos/SMJHL.svg';
 import WJCLogo from '../public/league_logos/WJC.svg';
 
@@ -28,7 +29,7 @@ export default () => {
       },
       {
         href: '/history',
-        Logo: SHLLogo,
+        Logo: HistoryLogo,
       },
     ],
     [],
