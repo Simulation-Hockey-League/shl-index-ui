@@ -15,7 +15,7 @@ export default async (
   WHERE LeagueID=${league} AND PlayerID = ${playerId} and TeamID >=0`;
 
   if (seasonId) {
-    search.append(SQL`AND SeasonID = ${seasonId} `);
+    search.append(SQL` AND SeasonID = ${seasonId} `);
   }
 
   search.append(SQL`
