@@ -12,7 +12,7 @@ export default async (
   const search = SQL`
   SELECT \`Last Name\` as Name
   FROM player_master
-  WHERE LeagueID=${league} AND PlayerID = ${playerId} `;
+  WHERE LeagueID=${league} AND PlayerID = ${playerId} and TeamID >=0`;
 
   if (seasonId) {
     search.append(SQL`AND SeasonID = ${seasonId} `);

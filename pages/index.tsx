@@ -4,6 +4,7 @@ import React from 'react';
 import { Link } from '../components/common/Link';
 import IIHFLogo from '../public/league_logos/IIHF.svg';
 import SHLLogo from '../public/league_logos/SHL.svg';
+import HistoryLogo from '../public/league_logos/SHLHISTORY.svg';
 import SMJHLLogo from '../public/league_logos/SMJHL.svg';
 import WJCLogo from '../public/league_logos/WJC.svg';
 
@@ -26,6 +27,10 @@ export default () => {
         href: '/wjc',
         Logo: WJCLogo,
       },
+      {
+        href: '/history',
+        Logo: HistoryLogo,
+      },
     ],
     [],
   );
@@ -43,7 +48,7 @@ export default () => {
           Welcome to the SHL Index
         </h1>
         <h2 className="mb-5 text-center font-mont text-4xl font-semibold tracking-widest text-secondary md:mb-0">
-          Select a League
+          Select a League or View History
         </h2>
         <div className="flex w-full flex-wrap items-center justify-evenly">
           {leagueLinks.map(({ href, Logo }) => (

@@ -336,3 +336,25 @@ export type TeamInfo = {
   goalsAgainst: number;
   winPercent: number;
 };
+
+export type PlayerHistory = Partial<Player> & {
+  season?: number;
+  seasons?: number;
+  evTimeOnIce: number;
+  evGoals: number;
+  evAssists: number;
+  evPoints: number;
+  teamAbbr: string;
+  stillActive: boolean;
+};
+
+export type GoalieHistory = Partial<Goalie> & {
+  seasons?: number;
+  season?: number;
+  teamAbbr: string;
+  stillActive: boolean;
+};
+
+export type TeamHistory = Partial<TeamInfo> & {
+  goalsDiff: number;
+};
