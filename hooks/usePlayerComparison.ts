@@ -94,13 +94,15 @@ export function usePlayerComparison({
   const seasonStats = useMemo(() => {
     if (!selectedSeason || !allSeasonStats) return null;
 
-    const filtered = allSeasonStats.filter(
+    if (isGoalie) {
+      return (allSeasonStats as Goalie[]).filter(
+        (stat) => stat.season === selectedSeason,
+      );
+    }
+
+    return (allSeasonStats as PlayerWithAdvancedStats[]).filter(
       (stat) => stat.season === selectedSeason,
     );
-
-    return isGoalie
-      ? (filtered as Goalie[])
-      : (filtered as PlayerWithAdvancedStats[]);
   }, [selectedSeason, allSeasonStats, isGoalie]);
 
   return {
