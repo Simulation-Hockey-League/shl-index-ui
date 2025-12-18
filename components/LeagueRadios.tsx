@@ -13,7 +13,7 @@ interface LeagueRadiosProps {
   onChange: (league: League) => void;
 }
 
-export function LeagueRadios({ value, onChange }: LeagueRadiosProps) {
+export const LeagueRadios = ({ value, onChange }: LeagueRadiosProps) => {
   return (
     <FormControl>
       <FormLabel className="mb-2 text-sm md:text-lg">League</FormLabel>
@@ -35,4 +35,4 @@ export function LeagueRadios({ value, onChange }: LeagueRadiosProps) {
       </RadioGroup>
     </FormControl>
   );
-}
+};

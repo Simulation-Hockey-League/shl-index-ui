@@ -46,10 +46,13 @@ function PlayerAwardsList({ playerName, awards }: PlayerAwardsListProps) {
   return (
     <div>
       <h4 className="mb-2 font-semibold">{playerName}</h4>
-      {wonAwards.length > 0 ? (
+      {wonAwards.length > 0 || nomAwards.length > 0 ? (
         <ul className="space-y-2 text-sm">
-          {wonAwards.map((award, idx) => (
-            <li key={idx} className="flex items-start gap-2">
+          {wonAwards.map((award) => (
+            <li
+              key={`${award.achievementName}-${award.seasonID}`}
+              className="flex items-start gap-2"
+            >
               <span className="text-green500">○</span>
               <div>
                 <div>{award.achievementName}</div>
@@ -59,8 +62,11 @@ function PlayerAwardsList({ playerName, awards }: PlayerAwardsListProps) {
               </div>
             </li>
           ))}
-          {nomAwards.map((award, idx) => (
-            <li key={idx} className="flex items-start gap-2">
+          {nomAwards.map((award) => (
+            <li
+              key={`${award.achievementName}-${award.seasonID}`}
+              className="flex items-start gap-2"
+            >
               <span className="text-blue600">○</span>
               <div>
                 <div>Nom - {award.achievementName}</div>

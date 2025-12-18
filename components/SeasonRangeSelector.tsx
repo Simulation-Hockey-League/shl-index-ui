@@ -10,13 +10,13 @@ interface SeasonRangeSelectorProps {
   onEndSeasonChange: (season: number) => void;
 }
 
-export function SeasonRangeSelector({
+export const SeasonRangeSelector = ({
   seasonsList,
   startSeason,
   endSeason,
   onStartSeasonChange,
   onEndSeasonChange,
-}: SeasonRangeSelectorProps) {
+}: SeasonRangeSelectorProps) => {
   const sortedSeasons = useMemo(
     () => [...seasonsList].sort((a, b) => b - a),
     [seasonsList],
@@ -50,4 +50,4 @@ export function SeasonRangeSelector({
       </div>
     </div>
   );
-}
+};

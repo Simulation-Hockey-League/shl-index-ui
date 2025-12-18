@@ -1,3 +1,4 @@
+import { PlayerHistory, GoalieHistory } from 'typings/api';
 import { CAREER_STAT_CONFIGS } from 'utils/comparisonHelpers';
 
 import { ComparisonTable } from './ComparisonTable';
@@ -5,7 +6,7 @@ import { ComparisonTable } from './ComparisonTable';
 interface CareerStatsComparisonProps {
   players: Array<{
     name: string;
-    career: any;
+    career: PlayerHistory | GoalieHistory;
     seasons: { min: number; max: number };
   }>;
   isGoalie?: boolean;
