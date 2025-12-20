@@ -150,6 +150,11 @@ export const GoalieHistoryTable = ({
             enableGlobalFilter: false,
             sortDescFirst: true,
           }),
+          columnHelper.accessor('gaa', {
+            header: () => <TableHeader title="gaa">GAA</TableHeader>,
+            enableGlobalFilter: false,
+            sortDescFirst: true,
+          }),
           columnHelper.accessor('savePct', {
             header: () => <TableHeader title="savePcts">SV%</TableHeader>,
             enableGlobalFilter: false,

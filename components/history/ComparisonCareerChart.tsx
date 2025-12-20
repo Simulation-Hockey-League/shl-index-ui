@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { PlayerHistory, GoalieHistory } from 'typings/api';
 import { COMPARISON_CONFIG } from 'utils/comparisonHelpers';
+import { calculateTimeOnIceDecimal } from 'utils/playerHelpers';
 
 interface PlayerData {
   availableSeasons: number[];
@@ -74,7 +75,13 @@ export const ComparisonCareerChart = ({
       let running = 0;
 
       return sorted.map((season, i) => {
-        const val = season[selectedStatOption.value] ?? 0;
+        let val = season[selectedStatOption.value] ?? 0;
+
+        if (selectedStatOption.value === 'timeOnIce') {
+          val = parseFloat(
+            calculateTimeOnIceDecimal(season.timeOnIce, season.gamesPlayed),
+          );
+        }
 
         if (selectedStatOption.cumulative) running += val;
 
@@ -206,7 +213,13 @@ export const ComparisonCareerChart = ({
           >
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="careerYear" />
-            <YAxis />
+            <YAxis
+              domain={
+                selectedStatOption.value === 'savePct'
+                  ? [0.75, 1]
+                  : ['auto', 'auto']
+              }
+            />
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" height={36} />
 

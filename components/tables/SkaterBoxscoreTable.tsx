@@ -70,26 +70,29 @@ export const SkaterBoxscoreTable = ({
         header: '',
         id: 'player-table-basic-info',
         columns: [
-          columnHelper.accessor(({ date, slug }) => [date, slug], {
-            header: 'Game',
+          columnHelper.accessor((row) => new Date(row.date).getTime(), {
             id: 'player-table-game',
+            header: 'Game',
             enableGlobalFilter: true,
-            cell: (props) => {
-              const cellValue = props.getValue();
+            sortDescFirst: true,
+
+            cell: ({ row }) => {
+              const { date, slug } = row.original;
+
               return (
                 <Link
                   href={{
                     pathname: `/[league]/[season]/game/[id]`,
                     query: {
                       ...onlyIncludeSeasonAndTypeInQuery(router.query),
-                      id: cellValue[1],
-                      league: league,
+                      id: slug,
+                      league,
                       season: season.toString(),
                     },
                   }}
-                  className="inline-block w-full max-w-[180px] truncate text-left leading-none text-blue600 "
+                  className="inline-block w-full max-w-[180px] truncate text-left leading-none text-blue600"
                 >
-                  {cellValue[0]}
+                  {date}
                 </Link>
               );
             },
