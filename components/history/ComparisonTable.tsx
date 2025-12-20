@@ -1,4 +1,5 @@
 import { getBestValue } from 'utils/comparisonHelpers';
+import { calculateTimeOnIceDecimal } from 'utils/playerHelpers';
 
 interface ComparisonTableProps {
   players: Array<{
@@ -29,6 +30,13 @@ export function ComparisonTable({
         {players.flatMap((player, idx) => {
           const val = getValueFn(player.data, key);
           const numVal = typeof val === 'string' ? parseFloat(val) : val;
+          const displayVal =
+            key === 'timeOnIce'
+              ? calculateTimeOnIceDecimal(
+                  player.data.timeOnIce,
+                  player.data.gamesPlayed,
+                )
+              : val;
 
           return [
             <td
@@ -39,7 +47,7 @@ export function ComparisonTable({
                   : 'text-primary'
               }`}
             >
-              {val}
+              {displayVal}
             </td>,
             idx < players.length - 1 && (
               <td key={`stat-${idx}`} className="px-3 py-2 font-semibold">

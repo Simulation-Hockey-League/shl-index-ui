@@ -59,6 +59,9 @@ export const calculateTimeOnIce = (toi: number, gamesPlayed: number) =>
     .toString()
     .padStart(2, '0')}`;
 
+export const calculateTimeOnIceDecimal = (toi: number, gamesPlayed: number) =>
+  (toi / gamesPlayed / 60).toFixed(2);
+
 const VALID_SKATER_ATTRIBUTES = [
   'screening',
   'gettingOpen',
