@@ -127,21 +127,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         tr.GF - tr.GA as goalsDiff,
         ROUND(tr.Wins / NULLIF(tr.Wins + tr.Losses + tr.OTL, 0), 3) AS winPercent
       FROM team_records tr
-      INNER JOIN (
-        SELECT t1.TeamID, t1.LeagueID, t1.Name, t1.Nickname
-        FROM team_data AS t1
-        INNER JOIN (
-          SELECT TeamID, LeagueID, MAX(SeasonID) AS LatestSeason
-          FROM team_data
-          WHERE LeagueID = ${+league}
-          GROUP BY TeamID, LeagueID
-        ) AS latest
-          ON t1.TeamID = latest.TeamID
-          AND t1.LeagueID = latest.LeagueID
-          AND t1.SeasonID = latest.LatestSeason
-      ) td
-        ON tr.TeamID = td.TeamID
-        AND tr.LeagueID = td.LeagueID
+        INNER JOIN team_data td
+          ON td.TeamID = tr.TeamID
+          AND td.LeagueID = tr.LeagueID
+          AND td.SeasonID = tr.SeasonID
     `,
       )
       .append(seasonFilter)
@@ -153,6 +142,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .append(sortColumn).append(` ${orderDirection}
     `);
   }
+
   const teams = await query(mainQuery);
 
   if ('error' in teams) {

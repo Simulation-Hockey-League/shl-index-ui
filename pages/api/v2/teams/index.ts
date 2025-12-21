@@ -79,6 +79,7 @@ export default async (
       search.append(SQL` AND DivisionID=${+division}`);
     }
   }
+  search.append(SQL` ORDER BY t.Name ASC`);
 
   const teams = await query(search);
 
