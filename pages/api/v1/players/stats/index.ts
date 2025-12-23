@@ -2,6 +2,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { getRatingTable } from 'utils/query';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
@@ -45,15 +46,23 @@ export default async (
       LIMIT 1
   `),
     ));
+
+  const rating_string = getRatingTable(season.SeasonID);
+
   const playerStats = await query(
     SQL`
-    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.G, s.A, s.PlusMinus, s.PIM, s.PPG, s.PPA, s.SHG, s.SHA, s.Fights, s.Fights_Won, s.HIT, s.GvA, s.TkA, s.SB, s.GR, s.OGR, s.DGR, s.SOG, s.TOI, s.PPTOI, s.SHTOI, s.PDO, s.GF60, s.GA60, s.SF60, s.SA60, s.CF, s.CA, s.CFPct, s.CFPctRel, s.FF, s.FA, s.FFPct, s.FFPctRel, s.GWG, s.FO, s.FOW, r.LD, r.RD, r.LW, r.C, r.RW, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID
-    FROM `.append(`player_skater_stats_${type} AS s`).append(SQL`
+    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.G, s.A, s.PlusMinus, s.PIM, s.PPG, s.PPA, s.SHG, s.SHA, s.Fights, s.Fights_Won, s.HIT, s.GvA, s.TkA, s.SB, s.GR, s.OGR, s.DGR, s.SOG, s.TOI, s.PPTOI, s.SHTOI, s.PDO, s.GF60, s.GA60, s.SF60, s.SA60, s.CF, s.CA, s.CFPct, s.CFPctRel, s.FF, s.FA, s.FFPct, s.FFPctRel, s.GWG, s.FO, s.FOW, r.LD, r.RD, r.LW, r.C, r.RW, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID, (s.SeasonID = rs.RookieSeasonID) AS isRookie
+    FROM `
+      .append(`player_skater_stats_${type} AS s`)
+      .append(
+        SQL`
     INNER JOIN player_master as p
     ON s.SeasonID = p.SeasonID 
     AND s.LeagueID = p.LeagueID
     AND s.PlayerID = p.PlayerID
-    INNER JOIN corrected_player_ratings as r
+    INNER JOIN`,
+      )
+      .append(` ${rating_string} as r`).append(SQL`
     ON s.SeasonID = r.SeasonID 
     AND s.LeagueID = r.LeagueID
     AND s.PlayerID = r.PlayerID
@@ -61,17 +70,21 @@ export default async (
     ON p.TeamID = team_data.TeamID
     AND s.SeasonID = team_data.SeasonID
     AND s.LeagueID = team_data.LeagueID  
+    LEFT JOIN player_skater_rookie_season AS rs
+      ON rs.PlayerID = s.PlayerID
+     AND rs.LeagueID = s.LeagueID
     WHERE s.LeagueID=${+league}
     AND s.SeasonID=${season.SeasonID}
     AND r.G<19
     AND p.TeamID>=0;
   `),
   );
+
   const parsed = [...playerStats].map((player) => {
     const position = ['LD', 'RD', 'LW', 'C', 'RW'][
       [+player.LD, +player.RD, +player.LW, +player.C, +player.RW].indexOf(20)
     ];
-    
+
     return {
       id: player.PlayerID,
       name: player.Name,
@@ -108,6 +121,7 @@ export default async (
       gameRating: player.GR,
       offensiveGameRating: player.OGR,
       defensiveGameRating: player.DGR,
+      isRookie: Boolean(player.isRookie),
 
       advancedStats: {
         PDO: player.PDO,

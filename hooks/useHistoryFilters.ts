@@ -18,6 +18,7 @@ export interface PlayerFilters extends BaseFilters {
   position: string;
   minGP: number;
   active: boolean;
+  rookie: boolean;
 }
 export interface TeamFilters extends BaseFilters {}
 
@@ -31,6 +32,7 @@ const defaultPlayerFilters: PlayerFilters = {
   minGP: 0,
   grouped: true,
   active: false,
+  rookie: false,
 };
 
 const defaultTeamFilters: TeamFilters = {
@@ -142,6 +144,10 @@ export function useHistoryFilters(
               router.query.active !== undefined
                 ? router.query.active === 'true'
                 : (defaults as PlayerFilters).active,
+            rookie:
+              router.query.rookie !== undefined
+                ? router.query.rookie === 'true'
+                : (defaults as PlayerFilters).rookie,
           }
         : baseUrlFilters;
 
@@ -161,6 +167,7 @@ export function useHistoryFilters(
         query.type = playerFilters.leagueType;
         query.position = playerFilters.position;
         query.active = String(playerFilters.active);
+        query.rookie = String(playerFilters.rookie);
         if (playerFilters.minGP > 0) {
           query.minGP = String(playerFilters.minGP);
         }
@@ -201,6 +208,7 @@ export function useHistoryFilters(
           query.minGP = String(playerFilters.minGP);
         }
         query.active = String(playerFilters.active);
+        query.rookie = String(playerFilters.rookie);
       }
 
       if (newFilters.franchiseID >= 0) {

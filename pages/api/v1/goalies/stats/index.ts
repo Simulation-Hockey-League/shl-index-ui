@@ -2,6 +2,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { getRatingTable } from 'utils/query';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
@@ -44,15 +45,22 @@ export default async (
   `),
     ));
 
+  const rating_string = getRatingTable(season.SeasonID);
+
   const goalieStats = await query(
     SQL`
     SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.Minutes, s.Wins, s.Losses, s.OT, s.ShotsAgainst, s.Saves, s.GoalsAgainst, s.GAA, s.Shutouts, s.SavePct, s.GameRating, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID
-    FROM `.append(`player_goalie_stats_${type} AS s`).append(SQL`
+    FROM `
+      .append(`player_goalie_stats_${type} AS s`)
+      .append(
+        SQL`
     INNER JOIN player_master as p
     ON s.SeasonID = p.SeasonID 
     AND s.LeagueID = p.LeagueID
     AND s.PlayerID = p.PlayerID
-	INNER JOIN corrected_player_ratings as r
+	INNER JOIN`,
+      )
+      .append(` ${rating_string} as r`).append(SQL`
     ON s.SeasonID = r.SeasonID 
     AND s.LeagueID = r.LeagueID
     AND s.PlayerID = r.PlayerID

@@ -1,6 +1,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { getRatingTable } from 'utils/query';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
@@ -38,22 +39,25 @@ export default async (
 
   const [season] = seasonResponse;
 
-  const basePlayerData = await query<InternalPlayerRatings>(SQL`
+  const rating_string = getRatingTable(season.SeasonID);
+
+  const sqlQuery = SQL`
   SELECT r.*, p.\`Last Name\` as Name, t.\`Abbr\`
-  FROM corrected_player_ratings as r
-  INNER JOIN player_master as p
+  FROM `.append(`${rating_string} AS r`).append(SQL`
+  INNER JOIN player_master AS p
     ON r.PlayerID = p.PlayerID
-      AND r.SeasonID = p.SeasonID
-      AND r.LeagueID = p.LeagueID
-  INNER JOIN team_data as t
+   AND r.SeasonID = p.SeasonID
+   AND r.LeagueID = p.LeagueID
+  INNER JOIN team_data AS t
     ON p.TeamID = t.TeamID
-      AND r.SeasonID = t.SeasonID
-      AND r.LeagueID = t.LeagueID
+   AND r.SeasonID = t.SeasonID
+   AND r.LeagueID = t.LeagueID
   WHERE r.LeagueID=${+league}
     AND r.SeasonID=${season.SeasonID}
     AND r.G=20
-    AND p.TeamID>=0
+    AND p.TeamID >= 0
 `);
+  const basePlayerData = await query<InternalPlayerRatings>(sqlQuery);
 
   if ('error' in basePlayerData) {
     res.status(400).send('Error: Backend Error');

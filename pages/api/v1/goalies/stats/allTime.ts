@@ -41,6 +41,7 @@ export default async (
     limit,
     grouped = 'true',
     active = 'false',
+    rookie = 'false',
     playerID,
   } = req.query;
 
@@ -107,14 +108,13 @@ export default async (
        s.GoalsAgainst,
        s.GAA,
        s.Shutouts,
-       s.SavePct
+       s.SavePct,
+       (s.SeasonID = rs.RookieSeasonID) AS isRookie
       FROM `,
     );
   }
-  goalieString
-    .append(`player_goalie_stats_${type} AS s`)
-    .append(
-      SQL`
+  goalieString.append(`player_goalie_stats_${type} AS s`).append(
+    SQL`
       INNER JOIN player_master AS p
       ON s.SeasonID = p.SeasonID
       AND s.LeagueID = p.LeagueID
@@ -126,7 +126,22 @@ export default async (
       INNER JOIN player_ratings AS r
       ON s.SeasonID = r.SeasonID
       AND s.LeagueID = r.LeagueID
-      AND s.PlayerID = r.PlayerID
+      AND s.PlayerID = r.PlayerID`,
+  );
+
+  if (!isGrouped) {
+    goalieString.append(
+      SQL`
+      LEFT JOIN player_goalie_rookie_season AS rs
+      ON rs.PlayerID = s.PlayerID
+     AND rs.LeagueID = s.LeagueID
+      `,
+    );
+  }
+
+  goalieString
+    .append(
+      SQL`
       WHERE s.LeagueID = ${+league}
       `,
     )
@@ -134,6 +149,7 @@ export default async (
     .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
     .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
     .append(playerID != null ? SQL` AND s.PlayerID = ${+playerID} ` : '')
+    .append(rookie === 'true' ? SQL` AND s.SeasonID = rs.RookieSeasonID ` : '')
     .append(isGrouped ? SQL` GROUP BY s.PlayerID, s.LeagueID` : '')
     .append(
       isGrouped && minGP != null
@@ -144,7 +160,6 @@ export default async (
     )
     .append(` ORDER BY ${sortSql} ${orderDirection}`)
     .append(limit != null ? SQL` LIMIT ${+limit};` : SQL`;`);
-
   let goalieStats = await query(goalieString);
 
   if ('error' in goalieStats) {
@@ -185,7 +200,7 @@ export default async (
       league: player.LeagueID,
       ...(isGrouped
         ? { seasons: player.Seasons }
-        : { season: player.SeasonID }),
+        : { season: player.SeasonID, isRookie: Boolean(player.isRookie) }),
       teamAbbr: player.TeamAbbrs,
       season: player.SeasonID,
       gamesPlayed: player.GP,
