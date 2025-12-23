@@ -23,6 +23,7 @@ export default async (
     league = 0,
     type: longType = 'regular',
     season: seasonid,
+    rookie = 'false',
   } = req.query;
 
   let type: string;
@@ -62,7 +63,9 @@ export default async (
     AND s.PlayerID = p.PlayerID
     INNER JOIN`,
       )
-      .append(` ${rating_string} as r`).append(SQL`
+      .append(` ${rating_string} as r`)
+      .append(
+        SQL`
     ON s.SeasonID = r.SeasonID 
     AND s.LeagueID = r.LeagueID
     AND s.PlayerID = r.PlayerID
@@ -76,8 +79,12 @@ export default async (
     WHERE s.LeagueID=${+league}
     AND s.SeasonID=${season.SeasonID}
     AND r.G<19
-    AND p.TeamID>=0;
-  `),
+    AND p.TeamID>=0
+      `,
+      )
+      .append(
+        rookie === 'true' ? SQL`  AND s.SeasonID = rs.RookieSeasonID;` : SQL`;`,
+      ),
   );
 
   const parsed = [...playerStats].map((player) => {

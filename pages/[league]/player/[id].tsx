@@ -216,7 +216,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
       {shouldShowIndexView && <Header league={league} activePage="players" />}
       <div
         className={classnames(
-          'bg-primary mx-auto w-full',
+          'mx-auto w-full bg-primary',
           shouldShowIndexView && 'p-[2.5%] lg:w-3/4 lg:px-0 lg:pb-10 lg:pt-px',
         )}
       >
@@ -270,7 +270,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                     </div>
                   )}
                 </div>
-                <div className="font-mont text-center text-lg uppercase">
+                <div className="text-center font-mont text-lg uppercase">
                   {'position' in playerInfo[0] ? playerInfo[0].position : 'G'} |{' '}
                   {Math.floor(playerInfo[0].height / 12)} ft{' '}
                   {playerInfo[0].height % 12} in | {playerInfo[0].weight} lbs

@@ -21,6 +21,7 @@ export default async (
     league = 0,
     type: longType = 'regular',
     season: seasonid,
+    rookie = 'false',
   } = req.query;
 
   let type: string;
@@ -49,7 +50,7 @@ export default async (
 
   const goalieStats = await query(
     SQL`
-    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.Minutes, s.Wins, s.Losses, s.OT, s.ShotsAgainst, s.Saves, s.GoalsAgainst, s.GAA, s.Shutouts, s.SavePct, s.GameRating, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID
+    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.Minutes, s.Wins, s.Losses, s.OT, s.ShotsAgainst, s.Saves, s.GoalsAgainst, s.GAA, s.Shutouts, s.SavePct, s.GameRating, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID, (s.SeasonID = rs.RookieSeasonID) AS isRookie
     FROM `
       .append(`player_goalie_stats_${type} AS s`)
       .append(
@@ -60,7 +61,9 @@ export default async (
     AND s.PlayerID = p.PlayerID
 	INNER JOIN`,
       )
-      .append(` ${rating_string} as r`).append(SQL`
+      .append(` ${rating_string} as r`)
+      .append(
+        SQL`
     ON s.SeasonID = r.SeasonID 
     AND s.LeagueID = r.LeagueID
     AND s.PlayerID = r.PlayerID
@@ -68,11 +71,18 @@ export default async (
     ON p.TeamID = team_data.TeamID
     AND s.SeasonID = team_data.SeasonID
     AND s.LeagueID = team_data.LeagueID  
+    LEFT JOIN player_goalie_rookie_season AS rs
+      ON rs.PlayerID = s.PlayerID
+     AND rs.LeagueID = s.LeagueID
     WHERE s.LeagueID=${+league}
     AND s.SeasonID=${season.SeasonID}
     AND r.G=20
-	AND p.TeamID>=0;
-  `),
+	AND p.TeamID>=0
+  `,
+      )
+      .append(
+        rookie === 'true' ? SQL`  AND s.SeasonID = rs.RookieSeasonID;` : SQL`;`,
+      ),
   );
 
   const parsed = [...goalieStats].map((player) => {
@@ -95,6 +105,7 @@ export default async (
       shutouts: player.Shutouts,
       savePct: player.SavePct.toFixed(3),
       gameRating: player.GameRating,
+      isRookie: Boolean(player.isRookie),
     };
   });
 
