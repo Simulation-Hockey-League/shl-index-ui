@@ -105,7 +105,7 @@ export default async (
       shutouts: player.Shutouts,
       savePct: player.SavePct.toFixed(3),
       gameRating: player.GameRating,
-      isRookie: Boolean(player.isRookie),
+      rookie: Boolean(player.isRookie),
     };
   });
 

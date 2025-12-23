@@ -128,8 +128,7 @@ export default async (
       gameRating: player.GR,
       offensiveGameRating: player.OGR,
       defensiveGameRating: player.DGR,
-      isRookie: Boolean(player.isRookie),
-
+      rookie: Boolean(player.isRookie),
       advancedStats: {
         PDO: player.PDO,
         GF60: player.GF60,
