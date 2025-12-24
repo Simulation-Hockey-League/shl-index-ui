@@ -1,5 +1,7 @@
 import {
+  Checkbox,
   Spinner,
+  Switch,
   Tab,
   TabList,
   TabPanel,
@@ -9,6 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { NextSeo } from 'next-seo';
+import { useMemo, useState } from 'react';
 
 import { Footer } from '../../components/Footer';
 import { Header } from '../../components/Header';
@@ -31,62 +34,94 @@ import { SkaterRatings } from '../api/v1/players/ratings/[id]';
 export default ({ league }: { league: League }) => {
   const { season, isSTHS } = useSeason();
   const { type } = useSeasonType();
+  const [rookie, setRookie] = useState(false);
+  const [positions, setPositions] = useState({
+    C: true,
+    LW: true,
+    RW: true,
+    LD: true,
+    RD: true,
+  });
 
   const { data: skaterScoring } = useQuery<PlayerWithAdvancedStats[]>({
-    queryKey: ['skaterScoring', league, type, season],
+    queryKey: ['skaterScoring', league, type, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
       const seasonTypeParam = type
         ? `&type=${seasonTypeToApiFriendlyParam(type)}`
         : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
         `api/v1/players/stats?league=${leagueNameToId(
           league,
-        )}${seasonParam}${seasonTypeParam}`,
+        )}${seasonParam}${seasonTypeParam}${rookieParam}`,
       );
     },
   });
+  const filteredSkaterScoring = useMemo(() => {
+    if (!skaterScoring) return [];
+    return skaterScoring.filter((player) => {
+      return positions[player.position as keyof typeof positions];
+    });
+  }, [skaterScoring, positions]);
 
   const { data: goalieScoring } = useQuery<Goalie[]>({
-    queryKey: ['goalieScoring', league, type, season],
+    queryKey: ['goalieScoring', league, type, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
       const seasonTypeParam = type
         ? `&type=${seasonTypeToApiFriendlyParam(type)}`
         : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
         `api/v1/goalies/stats?league=${leagueNameToId(
           league,
-        )}${seasonParam}${seasonTypeParam}`,
+        )}${seasonParam}${seasonTypeParam}${rookieParam}`,
       );
     },
   });
 
   const { data: skaterRatings } = useQuery<SkaterRatings[]>({
-    queryKey: ['skaterRatings', league, season],
+    queryKey: ['skaterRatings', league, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
-        `api/v1/players/ratings?league=${leagueNameToId(league)}${seasonParam}`,
+        `api/v1/players/ratings?league=${leagueNameToId(
+          league,
+        )}${seasonParam}${rookieParam}`,
       );
     },
     enabled: !isSTHS,
   });
 
+  const filteredSkaterRatings = useMemo(() => {
+    if (!skaterRatings) return [];
+    return skaterRatings.filter((player) => {
+      return positions[player.position as keyof typeof positions];
+    });
+  }, [skaterRatings, positions]);
+
   const { data: goalieRatings } = useQuery<GoalieRatings[]>({
-    queryKey: ['goalieRatings', league, season],
+    queryKey: ['goalieRatings', league, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
-        `api/v1/goalies/ratings?league=${leagueNameToId(league)}${seasonParam}`,
+        `api/v1/goalies/ratings?league=${leagueNameToId(
+          league,
+        )}${seasonParam}${rookieParam}`,
       );
     },
     enabled: !isSTHS,
   });
 
   let isLoading = isSTHS
-    ? !skaterScoring || !goalieScoring
-    : !skaterScoring || !skaterRatings || !goalieRatings || !goalieScoring;
+    ? !filteredSkaterScoring || !goalieScoring
+    : !filteredSkaterScoring ||
+      !filteredSkaterRatings ||
+      !goalieRatings ||
+      !goalieScoring;
 
   return (
     <>
@@ -117,18 +152,59 @@ export default ({ league }: { league: League }) => {
                 {!isSTHS && <Tab>Advanced Stats</Tab>}
                 {!isSTHS && <Tab>Ratings</Tab>}
               </TabList>
+              <div className="mt-4 flex flex-col gap-4 rounded-md bg-grey900/50 p-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold">Rookies Only:</span>
+                  <Switch
+                    id="rookie-filter"
+                    isChecked={rookie}
+                    onChange={(e) => setRookie(e.target.checked)}
+                    colorScheme="blue"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                  <span className="text-sm font-semibold">Position:</span>
+                  <div className="flex flex-wrap gap-3 sm:gap-4">
+                    {(['C', 'LW', 'RW', 'LD', 'RD'] as const).map((pos) => (
+                      <Checkbox
+                        key={pos}
+                        isChecked={positions[pos]}
+                        onChange={(e) =>
+                          setPositions({
+                            ...positions,
+                            [pos]: e.target.checked,
+                          })
+                        }
+                        colorScheme="blue"
+                      >
+                        {pos}
+                      </Checkbox>
+                    ))}
+                  </div>
+                </div>
+              </div>
               <TabPanels>
                 <TabPanel>
-                  <SkaterScoreTable data={skaterScoring ?? []} type="league" />
+                  <SkaterScoreTable
+                    data={filteredSkaterScoring ?? []}
+                    type="league"
+                  />
                 </TabPanel>
-                {!isSTHS && skaterScoring && (
+                {!isSTHS && filteredSkaterScoring && (
                   <TabPanel>
-                    <SkaterAdvStatsTable data={skaterScoring} type="league" />
+                    <SkaterAdvStatsTable
+                      data={filteredSkaterScoring}
+                      type="league"
+                    />
                   </TabPanel>
                 )}
-                {!isSTHS && skaterRatings && (
+                {!isSTHS && filteredSkaterRatings && (
                   <TabPanel>
-                    <SkaterRatingsTable data={skaterRatings} type="league" />
+                    <SkaterRatingsTable
+                      data={filteredSkaterRatings}
+                      type="league"
+                    />
                   </TabPanel>
                 )}
               </TabPanels>

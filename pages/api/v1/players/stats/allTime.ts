@@ -57,6 +57,7 @@ export default async (
     limit,
     grouped = 'true',
     active = 'false',
+    rookie = 'false',
     playerID,
   } = req.query;
 
@@ -158,7 +159,8 @@ export default async (
       s.PIM,
       s.SOG,
       s.FO, 
-      s.FOW
+      s.FOW,
+      (s.SeasonID = rs.RookieSeasonID) AS isRookie
       FROM `,
     );
   }
@@ -166,45 +168,59 @@ export default async (
   playerString.append(`player_skater_stats_${type} AS s`).append(
     SQL`
     INNER JOIN player_master AS p
-    ON s.SeasonID = p.SeasonID 
-    AND s.LeagueID = p.LeagueID
-    AND s.PlayerID = p.PlayerID
+      ON s.SeasonID = p.SeasonID 
+     AND s.LeagueID = p.LeagueID
+     AND s.PlayerID = p.PlayerID
+
     LEFT JOIN team_data AS t
-    ON s.TeamID = t.TeamID
-    AND s.LeagueID = t.LeagueID
-    AND s.SeasonID = t.SeasonID
+      ON s.TeamID = t.TeamID
+     AND s.LeagueID = t.LeagueID
+     AND s.SeasonID = t.SeasonID
+
     INNER JOIN player_ratings AS r
-    ON s.SeasonID = r.SeasonID 
-    AND s.LeagueID = r.LeagueID
-    AND s.PlayerID = r.PlayerID
-    WHERE s.LeagueID = ${+league}
+      ON s.SeasonID = r.SeasonID 
+     AND s.LeagueID = r.LeagueID
+     AND s.PlayerID = r.PlayerID
+  `,
+  );
+
+  if (!isGrouped) {
+    playerString.append(SQL`
+    LEFT JOIN player_rookie_season AS rs
+      ON rs.PlayerID = s.PlayerID
+     AND rs.LeagueID = s.LeagueID
+  `);
+  }
+  playerString
+    .append(
+      SQL`
+  WHERE s.LeagueID = ${+league}
     AND r.G < 19
     AND p.TeamID >= 0
-    `
-      .append(
-        position === 'forward'
-          ? SQL` AND (r.LD < 20 AND r.RD < 20) `
-          : position === 'defenseman'
-          ? SQL` AND (r.LD = 20 OR r.RD = 20) `
-          : SQL``,
-      )
-      .append(
-        startSeason != null ? SQL` AND s.SeasonID >= ${+startSeason} ` : '',
-      )
-      .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
-      .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
-      .append(playerID != null ? SQL` AND s.PlayerID = ${+playerID} ` : '')
-      .append(isGrouped ? SQL` GROUP BY s.PlayerID, s.LeagueID` : '')
-      .append(
-        isGrouped && minGP != null
-          ? SQL` HAVING SUM(s.GP) >= ${+minGP} `
-          : !isGrouped && minGP != null
-          ? SQL` AND s.GP >= ${+minGP} `
-          : '',
-      )
-      .append(` ORDER BY ${sortSql} ${orderDirection} `)
-      .append(limit != null ? SQL` LIMIT ${+limit} ` : ''),
-  );
+`,
+    )
+    .append(
+      position === 'forward'
+        ? SQL` AND (r.LD < 20 AND r.RD < 20) `
+        : position === 'defenseman'
+        ? SQL` AND (r.LD = 20 OR r.RD = 20) `
+        : SQL``,
+    )
+    .append(startSeason != null ? SQL` AND s.SeasonID >= ${+startSeason} ` : '')
+    .append(endSeason != null ? SQL` AND s.SeasonID <= ${+endSeason} ` : '')
+    .append(teamID != null ? SQL` AND s.TeamID = ${+teamID} ` : '')
+    .append(playerID != null ? SQL` AND s.PlayerID = ${+playerID} ` : '')
+    .append(rookie === 'true' ? SQL` AND s.SeasonID = rs.RookieSeasonID ` : '')
+    .append(isGrouped ? SQL` GROUP BY s.PlayerID, s.LeagueID` : '')
+    .append(
+      isGrouped && minGP != null
+        ? SQL` HAVING SUM(s.GP) >= ${+minGP} `
+        : !isGrouped && minGP != null
+        ? SQL` AND s.GP >= ${+minGP} `
+        : '',
+    )
+    .append(` ORDER BY ${sortSql} ${orderDirection} `)
+    .append(limit != null ? SQL` LIMIT ${+limit} ` : '');
 
   let playerStats = await query(playerString);
 
@@ -245,7 +261,7 @@ export default async (
       league: player.LeagueID,
       ...(isGrouped
         ? { seasons: player.Seasons }
-        : { season: player.SeasonID }),
+        : { season: player.SeasonID, isRookie: Boolean(player.isRookie) }),
       teamAbbr: player.TeamAbbrs,
       gamesPlayed: player.GP,
       goals: player.G,

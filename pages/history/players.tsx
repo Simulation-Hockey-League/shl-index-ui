@@ -1,4 +1,4 @@
-import { FormLabel, Spinner } from '@chakra-ui/react';
+import { FormLabel, Spinner, Tooltip } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
 import { HistoryHeader } from 'components/history/HistoryHeader';
@@ -77,6 +77,7 @@ export default function PlayersPage() {
       ,
       isGoalie,
       filters.active,
+      filters.rookie,
     ],
     queryFn: () => {
       const positionParam =
@@ -97,11 +98,12 @@ export default function PlayersPage() {
         ? `&type=${filters.leagueType}`
         : '';
       const activeParam = filters.active ? '&active=true' : '&active=false';
+      const rookieParam = filters.rookie ? '&rookie=true' : '&rookie=false';
       const skaterParam = isGoalie ? 'goalies' : 'players';
       return query(
         `api/v1/${skaterParam}/stats/allTime?league=${leagueNameToId(
           filters.league,
-        )}${positionParam}${seasonTypeParam}${startSeasonParam}${endSeasonParam}${minGPParam}${franchiseIDParam}${groupedParam}${activeParam}`,
+        )}${positionParam}${seasonTypeParam}${startSeasonParam}${endSeasonParam}${minGPParam}${franchiseIDParam}${groupedParam}${activeParam}${rookieParam}`,
       );
     },
     enabled: isInitialized,
@@ -175,19 +177,25 @@ export default function PlayersPage() {
                     <div className="flex flex-col gap-2">
                       <FormLabel className="mb-0">Filters</FormLabel>
                       <div className="flex flex-row items-center gap-3">
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={filters.grouped}
-                            onChange={(e) =>
-                              updateFilters({ grouped: e.target.checked })
-                            }
-                            className="size-4 rounded border-primary"
-                          />
-                          <span className="text-xs font-medium">
-                            Sum Results
-                          </span>
-                        </label>
+                        <Tooltip
+                          label="Disabled when you have rookies selected"
+                          isDisabled={!filters.rookie}
+                        >
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={filters.grouped}
+                              disabled={filters.rookie}
+                              onChange={(e) =>
+                                updateFilters({ grouped: e.target.checked })
+                              }
+                              className="size-4 rounded border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                            <span className="text-xs font-medium">
+                              Sum Results
+                            </span>
+                          </label>
+                        </Tooltip>
 
                         <label className="flex items-center gap-2">
                           <input
@@ -202,6 +210,25 @@ export default function PlayersPage() {
                             Still Active?
                           </span>
                         </label>
+                        <Tooltip
+                          label="Disabled when you have sum selected"
+                          isDisabled={!filters.grouped}
+                        >
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={filters.rookie}
+                              disabled={filters.grouped}
+                              onChange={(e) =>
+                                updateFilters({ rookie: e.target.checked })
+                              }
+                              className="size-4 rounded border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                            <span className="text-xs font-medium">
+                              Rookie Season
+                            </span>
+                          </label>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>

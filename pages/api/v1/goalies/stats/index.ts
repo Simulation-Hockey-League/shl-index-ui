@@ -2,6 +2,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { getRatingTable } from 'utils/query';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
@@ -20,6 +21,7 @@ export default async (
     league = 0,
     type: longType = 'regular',
     season: seasonid,
+    rookie = 'false',
   } = req.query;
 
   let type: string;
@@ -44,15 +46,24 @@ export default async (
   `),
     ));
 
+  const rating_string = getRatingTable(season.SeasonID);
+
   const goalieStats = await query(
     SQL`
-    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.Minutes, s.Wins, s.Losses, s.OT, s.ShotsAgainst, s.Saves, s.GoalsAgainst, s.GAA, s.Shutouts, s.SavePct, s.GameRating, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID
-    FROM `.append(`player_goalie_stats_${type} AS s`).append(SQL`
+    SELECT s.PlayerID, s.LeagueID, s.SeasonID, s.TeamID, p.\`Last Name\` AS Name, s.GP, s.Minutes, s.Wins, s.Losses, s.OT, s.ShotsAgainst, s.Saves, s.GoalsAgainst, s.GAA, s.Shutouts, s.SavePct, s.GameRating, team_data.Abbr, team_data.LeagueID, team_data.TeamID, team_data.SeasonID, (s.SeasonID = rs.RookieSeasonID) AS isRookie
+    FROM `
+      .append(`player_goalie_stats_${type} AS s`)
+      .append(
+        SQL`
     INNER JOIN player_master as p
     ON s.SeasonID = p.SeasonID 
     AND s.LeagueID = p.LeagueID
     AND s.PlayerID = p.PlayerID
-	INNER JOIN corrected_player_ratings as r
+	INNER JOIN`,
+      )
+      .append(` ${rating_string} as r`)
+      .append(
+        SQL`
     ON s.SeasonID = r.SeasonID 
     AND s.LeagueID = r.LeagueID
     AND s.PlayerID = r.PlayerID
@@ -60,11 +71,18 @@ export default async (
     ON p.TeamID = team_data.TeamID
     AND s.SeasonID = team_data.SeasonID
     AND s.LeagueID = team_data.LeagueID  
+    LEFT JOIN player_rookie_season AS rs
+      ON rs.PlayerID = s.PlayerID
+     AND rs.LeagueID = s.LeagueID
     WHERE s.LeagueID=${+league}
     AND s.SeasonID=${season.SeasonID}
     AND r.G=20
-	AND p.TeamID>=0;
-  `),
+	AND p.TeamID>=0
+  `,
+      )
+      .append(
+        rookie === 'true' ? SQL`  AND s.SeasonID = rs.RookieSeasonID;` : SQL`;`,
+      ),
   );
 
   const parsed = [...goalieStats].map((player) => {
@@ -87,6 +105,7 @@ export default async (
       shutouts: player.Shutouts,
       savePct: player.SavePct.toFixed(3),
       gameRating: player.GameRating,
+      rookie: Boolean(player.isRookie),
     };
   });
 

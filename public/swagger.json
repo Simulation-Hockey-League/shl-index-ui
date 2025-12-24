@@ -539,6 +539,12 @@
             "in": "query",
             "type": "string",
             "default": "regular"
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -767,6 +773,12 @@
             "in": "query",
             "type": "string",
             "default": "regular"
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -2601,6 +2613,10 @@
           "type": "number",
           "example": 72
         },
+        "rookie": {
+          "type": "boolean",
+          "example": false
+        },
         "advancedStats": {
           "type": "object",
           "properties": {
@@ -3078,6 +3094,10 @@
         "gameRating": {
           "type": "number",
           "example": 54
+        },
+        "rookie": {
+          "type": "boolean",
+          "example": false
         }
       }
     },

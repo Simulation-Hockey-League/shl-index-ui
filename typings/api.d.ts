@@ -346,6 +346,7 @@ export type PlayerHistory = Partial<Player> & {
   evPoints: number;
   teamAbbr: string;
   stillActive: boolean;
+  isRookie: boolean;
 };
 
 export type GoalieHistory = Partial<Goalie> & {
@@ -353,6 +354,7 @@ export type GoalieHistory = Partial<Goalie> & {
   season?: number;
   teamAbbr: string;
   stillActive: boolean;
+  isRookie: boolean;
 };
 
 export type TeamHistory = Partial<TeamInfo> & {

@@ -22,3 +22,10 @@ export const validateSeason = (season: string): boolean => {
   const seasonRegex = /^\d{1,3}$/; // rip season 1000
   return seasonRegex.test(season);
 };
+
+export function getRatingTable(seasonID: number): string {
+  if (seasonID >= 53 && seasonID <= 81) {
+    return 'corrected_player_ratings';
+  }
+  return 'player_ratings';
+}
