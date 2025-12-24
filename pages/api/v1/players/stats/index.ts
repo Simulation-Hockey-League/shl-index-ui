@@ -73,7 +73,7 @@ export default async (
     ON p.TeamID = team_data.TeamID
     AND s.SeasonID = team_data.SeasonID
     AND s.LeagueID = team_data.LeagueID  
-    LEFT JOIN player_skater_rookie_season AS rs
+    LEFT JOIN player_rookie_season AS rs
       ON rs.PlayerID = s.PlayerID
      AND rs.LeagueID = s.LeagueID
     WHERE s.LeagueID=${+league}

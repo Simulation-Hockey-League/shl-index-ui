@@ -82,11 +82,14 @@ export default ({ league }: { league: League }) => {
   });
 
   const { data: skaterRatings } = useQuery<SkaterRatings[]>({
-    queryKey: ['skaterRatings', league, season],
+    queryKey: ['skaterRatings', league, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
-        `api/v1/players/ratings?league=${leagueNameToId(league)}${seasonParam}`,
+        `api/v1/players/ratings?league=${leagueNameToId(
+          league,
+        )}${seasonParam}${rookieParam}`,
       );
     },
     enabled: !isSTHS,
@@ -100,11 +103,14 @@ export default ({ league }: { league: League }) => {
   }, [skaterRatings, positions]);
 
   const { data: goalieRatings } = useQuery<GoalieRatings[]>({
-    queryKey: ['goalieRatings', league, season],
+    queryKey: ['goalieRatings', league, season, rookie],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
+      const rookieParam = rookie ? '&rookie=true' : '';
       return query(
-        `api/v1/goalies/ratings?league=${leagueNameToId(league)}${seasonParam}`,
+        `api/v1/goalies/ratings?league=${leagueNameToId(
+          league,
+        )}${seasonParam}${rookieParam}`,
       );
     },
     enabled: !isSTHS,

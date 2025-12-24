@@ -186,7 +186,7 @@ export default async (
 
   if (!isGrouped) {
     playerString.append(SQL`
-    LEFT JOIN player_skater_rookie_season AS rs
+    LEFT JOIN player_rookie_season AS rs
       ON rs.PlayerID = s.PlayerID
      AND rs.LeagueID = s.LeagueID
   `);

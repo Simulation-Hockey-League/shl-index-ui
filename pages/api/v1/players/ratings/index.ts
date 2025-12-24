@@ -21,7 +21,7 @@ export default async (
 ): Promise<void> => {
   await use(req, res, cors);
 
-  const { league = 0, season: seasonid } = req.query;
+  const { league = 0, season: seasonid, rookie = 'false' } = req.query;
 
   const seasonResponse =
     //@ts-ignore
@@ -50,7 +50,10 @@ export default async (
 
   const sqlQuery = SQL`
   SELECT r.*, p.\`Last Name\` as Name, t.\`Abbr\`
-  FROM `.append(`${rating_string} AS r`).append(SQL`
+  FROM `
+    .append(`${rating_string} AS r`)
+    .append(
+      SQL`
   INNER JOIN player_master AS p
     ON r.PlayerID = p.PlayerID
    AND r.SeasonID = p.SeasonID
@@ -59,11 +62,17 @@ export default async (
     ON p.TeamID = t.TeamID
    AND r.SeasonID = t.SeasonID
    AND r.LeagueID = t.LeagueID
+   LEFT JOIN player_rookie_season AS rs
+      ON rs.PlayerID = r.PlayerID
+     AND rs.LeagueID = r.LeagueID
   WHERE r.LeagueID=${+league}
     AND r.SeasonID=${season.SeasonID}
     AND r.G < 19
-    AND p.TeamID >= 0
-`);
+    AND p.TeamID >= 0`,
+    )
+    .append(
+      rookie === 'true' ? SQL`  AND r.SeasonID = rs.RookieSeasonID;` : SQL`;`,
+    );
   const basePlayerData = await query<InternalPlayerRatings>(sqlQuery);
 
   if ('error' in basePlayerData) {
