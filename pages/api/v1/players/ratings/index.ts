@@ -1,6 +1,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { getRatingTable } from 'utils/query';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
@@ -20,7 +21,7 @@ export default async (
 ): Promise<void> => {
   await use(req, res, cors);
 
-  const { league = 0, season: seasonid } = req.query;
+  const { league = 0, season: seasonid, rookie = 'false' } = req.query;
 
   const seasonResponse =
     //@ts-ignore
@@ -40,27 +41,39 @@ export default async (
 
   const [season] = seasonResponse;
 
-  if(season.SeasonID <= 52){
-    res.status(400).send('Error: no player ratings before S52')
+  if (season.SeasonID <= 52) {
+    res.status(400).send('Error: no player ratings before S52');
     return;
   }
 
-  const basePlayerData = await query<InternalPlayerRatings>(SQL`
+  const rating_string = getRatingTable(season.SeasonID);
+
+  const sqlQuery = SQL`
   SELECT r.*, p.\`Last Name\` as Name, t.\`Abbr\`
-  FROM corrected_player_ratings as r
-  INNER JOIN player_master as p
+  FROM `
+    .append(`${rating_string} AS r`)
+    .append(
+      SQL`
+  INNER JOIN player_master AS p
     ON r.PlayerID = p.PlayerID
-      AND r.SeasonID = p.SeasonID
-      AND r.LeagueID = p.LeagueID
-  INNER JOIN team_data as t
+   AND r.SeasonID = p.SeasonID
+   AND r.LeagueID = p.LeagueID
+  INNER JOIN team_data AS t
     ON p.TeamID = t.TeamID
-      AND r.SeasonID = t.SeasonID
-      AND r.LeagueID = t.LeagueID
+   AND r.SeasonID = t.SeasonID
+   AND r.LeagueID = t.LeagueID
+   LEFT JOIN player_rookie_season AS rs
+      ON rs.PlayerID = r.PlayerID
+     AND rs.LeagueID = r.LeagueID
   WHERE r.LeagueID=${+league}
     AND r.SeasonID=${season.SeasonID}
-    AND r.G<19
-    AND p.TeamID>=0
-  `);
+    AND r.G < 19
+    AND p.TeamID >= 0`,
+    )
+    .append(
+      rookie === 'true' ? SQL`  AND r.SeasonID = rs.RookieSeasonID;` : SQL`;`,
+    );
+  const basePlayerData = await query<InternalPlayerRatings>(sqlQuery);
 
   if ('error' in basePlayerData) {
     res.status(400).send('Error: Backend Error');
