@@ -161,8 +161,8 @@ export const GoalieScoreTable = ({
         ),
         footer: ({ table }) =>
           (
-            calculateColumnSumForColumnID(table, 'goalsAgainst') /
-            calculateColumnSumForColumnID(table, 'gamesPlayed')
+            (calculateColumnSumForColumnID(table, 'goalsAgainst') * 60) /
+            calculateColumnSumForColumnID(table, 'minutes')
           ).toFixed(2),
         enableGlobalFilter: false,
         sortDescFirst: true,
