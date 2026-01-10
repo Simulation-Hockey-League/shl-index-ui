@@ -87,9 +87,15 @@ export default async (
         SUM(s.ShotsAgainst) AS ShotsAgainst,
         SUM(s.Saves) AS Saves,
         SUM(s.GoalsAgainst) AS GoalsAgainst,
-        AVG(s.GAA) AS GAA,
+        ROUND(
+          (SUM(s.GoalsAgainst) * 60) / NULLIF(SUM(s.Minutes), 0),
+          2
+        ) AS GAA,
         SUM(s.Shutouts) AS Shutouts,
-        AVG(s.SavePct) AS SavePct
+        ROUND(
+        SUM(s.Saves) / NULLIF(SUM(s.ShotsAgainst), 0),
+        3
+      ) AS SavePct
       FROM `,
     );
   } else {
