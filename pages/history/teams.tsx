@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Footer } from 'components/Footer';
 import { HistoryHeader } from 'components/history/HistoryHeader';
 import { LeagueRadios } from 'components/LeagueRadios';
+import { ReportSelector } from 'components/ReportSelector';
 import { SeasonRangeSelector } from 'components/SeasonRangeSelector';
 import { TeamHistoryTable } from 'components/tables/history/TeamHistoryTable';
 import { TeamSelector } from 'components/TeamSelector';
@@ -13,6 +14,11 @@ import { NextSeo } from 'next-seo';
 import { TeamHistory } from 'typings/api';
 import { leagueNameToId } from 'utils/leagueHelpers';
 import { query } from 'utils/query';
+import {
+  selectTeamReport,
+  TEAM_REPORT_LABELS,
+  TEAM_REPORT_OPTIONS,
+} from 'utils/reportHelpers';
 
 export default function TeamsPage() {
   const { filters, updateFilters, isInitialized } = useHistoryFilters('team');
@@ -77,6 +83,15 @@ export default function TeamsPage() {
                   onChange={(value) => updateFilters({ league: value })}
                 />
                 <div className="flex-1">
+                  <ReportSelector<selectTeamReport>
+                    options={TEAM_REPORT_OPTIONS}
+                    value={filters.report}
+                    onChange={(value) => updateFilters({ report: value })}
+                    labels={TEAM_REPORT_LABELS}
+                    className="flex-1"
+                  />
+                </div>
+                <div className="flex-1">
                   <FormLabel>Team</FormLabel>
                   {!teamLoading && (
                     <TeamSelector
@@ -118,6 +133,8 @@ export default function TeamsPage() {
             <TeamHistoryTable
               stats={teamHistory || []}
               league={leagueNameToId(filters.league)}
+              grouped={filters.grouped}
+              report={filters.report}
             />
           </>
         )}
