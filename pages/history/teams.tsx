@@ -14,11 +14,7 @@ import { NextSeo } from 'next-seo';
 import { TeamHistory } from 'typings/api';
 import { leagueNameToId } from 'utils/leagueHelpers';
 import { query } from 'utils/query';
-import {
-  selectTeamReport,
-  TEAM_REPORT_LABELS,
-  TEAM_REPORT_OPTIONS,
-} from 'utils/reportHelpers';
+import { selectTeamReport, TEAM_REPORT_LABELS } from 'utils/reportHelpers';
 
 export default function TeamsPage() {
   const { filters, updateFilters, isInitialized } = useHistoryFilters('team');
@@ -84,7 +80,7 @@ export default function TeamsPage() {
                 />
                 <div className="flex-1">
                   <ReportSelector<selectTeamReport>
-                    options={TEAM_REPORT_OPTIONS}
+                    options={Array.from(TEAM_REPORT_LABELS.keys())}
                     value={filters.report}
                     onChange={(value) => updateFilters({ report: value })}
                     labels={TEAM_REPORT_LABELS}
