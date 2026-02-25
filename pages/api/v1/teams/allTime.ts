@@ -82,7 +82,39 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         SUM(tr.GF) AS goalsFor,
         SUM(tr.GA) AS goalsAgainst,
         SUM(tr.GF - tr.GA) as goalsDiff,
-        ROUND(SUM(tr.Wins) / NULLIF(SUM(tr.Wins) + SUM(tr.Losses) + SUM(tr.OTL), 0), 3) AS winPercent
+        ROUND(SUM(tr.Wins) / NULLIF(SUM(tr.Wins) + SUM(tr.Losses) + SUM(tr.OTL) + SUM(tr.SOL), 0), 3) AS winPercent,
+        SUM(ltd.S) AS S,
+        SUM(ltd.SA) AS SA,
+        ROUND(AVG(ltd.FOPct), 2) AS FOPct,
+        SUM(ltd.SB) AS SB,
+        SUM(ltd.H) AS H,
+        SUM(ltd.TkA) AS TkA,
+        SUM(ltd.GvA) AS GvA,
+        ROUND(AVG(ltd.PIMPerG), 2) AS PIMPerG,
+        SUM(ltd.PPO) AS PPO,
+        SUM(ltd.PPG) AS PPG,
+        SUM(ltd.PPG)/NULLIF(SUM(ltd.PPO), 0) as PPPercent,
+        SUM(ltd.SHGA) AS SHGA,
+        SUM(ltd.SHO) AS SHO,
+        SUM(ltd.PPGA) AS PPGA,
+        1 - (SUM(ltd.PPGA) / NULLIF(SUM(ltd.SHO), 0)) as PKPercent,
+
+        SUM(COALESCE(prst.GamesWon, 0))  AS playoffWins,
+        SUM(COALESCE(prst.GamesLost, 0)) AS playoffLosses,
+
+        SUM(CASE WHEN prst.Result = 'Cup Winner'   THEN 1 ELSE 0 END) AS FinalsWon,
+        SUM(CASE WHEN prst.Result = 'Finals Lost'  THEN 1 ELSE 0 END) AS FinalsLost,
+
+        SUM(CASE WHEN prst.Result = 'Round 3' THEN 1 ELSE 0 END) AS Round3,
+        SUM(CASE WHEN prst.Result = 'Round 2' THEN 1 ELSE 0 END) AS Round2,
+        SUM(CASE WHEN prst.Result = 'Round 1' THEN 1 ELSE 0 END) AS Round1,
+
+        SUM(CASE WHEN prst.Result = 'Missed' OR prst.Result IS NULL THEN 1 ELSE 0 END) AS Missed,
+
+        SUM(CASE WHEN prst.Result = 'Gold'   THEN 1 ELSE 0 END) AS Gold,
+        SUM(CASE WHEN prst.Result = 'Silver' THEN 1 ELSE 0 END) AS Silver,
+        SUM(CASE WHEN prst.Result = 'Bronze' THEN 1 ELSE 0 END) AS Bronze,
+        SUM(CASE WHEN prst.Result = '4th Place' THEN 1 ELSE 0 END) AS Bronze_Losers
       FROM team_records tr
       INNER JOIN (
         SELECT t1.TeamID, t1.LeagueID, t1.Name, t1.Nickname
@@ -99,6 +131,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ) td
         ON tr.TeamID = td.TeamID
         AND tr.LeagueID = td.LeagueID
+      LEFT JOIN playoff_results as prst
+          ON prst.TeamID = tr.TeamID
+          AND prst.LeagueID = tr.LeagueID
+          AND prst.SeasonID = tr.SeasonID
+      LEFT JOIN league_rs_team_data ltd 
+        ON ltd.TeamID = tr.TeamID
+        AND ltd.LeagueID = tr.LeagueID
+        AND ltd.SeasonID = tr.SeasonID
     `,
       )
       .append(seasonFilter)
@@ -125,12 +165,41 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         tr.GF AS goalsFor,
         tr.GA AS goalsAgainst,
         tr.GF - tr.GA as goalsDiff,
-        ROUND(tr.Wins / NULLIF(tr.Wins + tr.Losses + tr.OTL, 0), 3) AS winPercent
+        ROUND(tr.Wins / NULLIF(tr.Wins + tr.Losses + tr.OTL + tr.SOL, 0), 3) AS winPercent,
+        ltd.LeagueRank,
+        ltd.DivisionRank,
+        ltd.ConferenceRank,
+        ltd.S,
+        ltd.SA,
+        ltd.FOPct,
+        ltd.SB,
+        ltd.H,
+        ltd.TkA,
+        ltd.GvA,
+        ltd.PIMPerG,
+        ltd.PPO,
+        ltd.PPG,
+        ltd.PPG/PPO as PPPercent,
+        ltd.SHGA,
+        ltd.SHO,
+        ltd.PPGA,
+        1 - (ltd.PPGA / NULLIF(ltd.SHO, 0)) as PKPercent,
+        COALESCE(prst.Result, 'Missed') AS PlayoffResult,
+        prst.GamesWon as PlayoffWins,
+        prst.GamesLost as PlayoffLosses
       FROM team_records tr
         INNER JOIN team_data td
           ON td.TeamID = tr.TeamID
           AND td.LeagueID = tr.LeagueID
           AND td.SeasonID = tr.SeasonID
+      LEFT JOIN league_rs_team_data ltd 
+        ON ltd.TeamID = tr.TeamID
+        AND ltd.LeagueID = tr.LeagueID
+        AND ltd.SeasonID = tr.SeasonID
+        LEFT JOIN playoff_results as prst
+          ON prst.TeamID = tr.TeamID
+          AND prst.LeagueID = tr.LeagueID
+          AND prst.SeasonID = tr.SeasonID
     `,
       )
       .append(seasonFilter)
@@ -172,6 +241,44 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     goalsAgainst: team.goalsAgainst,
     goalsDiff: team.goalsDiff,
     winPercent: team.winPercent,
+    S: team.S,
+    SA: team.SA,
+    FOPct: team.FOPct,
+    SB: team.SB,
+    H: team.H,
+    TkA: team.TkA,
+    GvA: team.GvA,
+    PIMPerG: team.PIMPerG,
+    PPO: team.PPO,
+    PPG: team.PPG,
+    PPPercent: team.PPPercent,
+    SHGA: team.SHGA,
+    SHO: team.SHO,
+    PPGA: team.PPGA,
+    PKPercent: team.PKPercent,
+    ...(isGrouped
+      ? {
+          playoffWins: team.playoffWins,
+          playoffLosses: team.playoffLosses,
+          finalsWon: team.FinalsWon,
+          finalsLost: team.FinalsLost,
+          round3: team.Round3,
+          round2: team.Round2,
+          round1: team.Round1,
+          missed: team.Missed,
+          gold: team.Gold,
+          silver: team.Silver,
+          bronze: team.Bronze,
+          bronzeLosers: team.Bronze_Losers,
+        }
+      : {
+          leagueRank: team.LeagueRank,
+          divisionRank: team.DivisionRank,
+          conferenceRank: team.ConferenceRank,
+          playoffResult: team.PlayoffResult,
+          playoffWins: team.PlayoffWins,
+          playoffLosses: team.PlayoffLosses,
+        }),
   }));
 
   res.status(200).json(parsed);

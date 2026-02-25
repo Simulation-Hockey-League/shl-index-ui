@@ -129,5 +129,25 @@ export default async (
     return parsed[key];
   });
 
+  if (+league === 2 || +league === 3) {
+    const finalRound = parsedByRounds[parsedByRounds.length - 1];
+    const semifinalRound = parsedByRounds[parsedByRounds.length - 2];
+
+    if (finalRound?.length === 2 && semifinalRound) {
+      const semifinalWinnerIds = semifinalRound.map((series) =>
+        series.team1.wins > series.team2.wins
+          ? series.team1.id
+          : series.team2.id,
+      );
+
+      parsedByRounds[parsedByRounds.length - 1] = finalRound.sort((a) =>
+        semifinalWinnerIds.includes(a.team1.id) &&
+        semifinalWinnerIds.includes(a.team2.id)
+          ? -1
+          : 1,
+      );
+    }
+  }
+
   res.status(200).json(parsedByRounds);
 };

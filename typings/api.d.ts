@@ -359,4 +359,35 @@ export type GoalieHistory = Partial<Goalie> & {
 
 export type TeamHistory = Partial<TeamInfo> & {
   goalsDiff: number;
+  leagueRank?: number;
+  divisionRank?: number;
+  conferenceRank?: number;
+  S?: number;
+  SA?: number;
+  FOPct?: number;
+  SB?: number;
+  H?: number;
+  TkA?: number;
+  GvA?: number;
+  PIMPerG?: number;
+  PPO?: number;
+  PPG?: number;
+  PPPercent?: number;
+  SHGA?: number;
+  SHO?: number;
+  PPGA?: number;
+  PKPercent?: number;
+  playoffResult?: string;
+  playoffWins: number;
+  playoffLosses: number;
+  finalsWon?: number;
+  finalsLost?: number;
+  round3?: number;
+  round2?: number;
+  round1?: number;
+  missed?: number;
+  gold?: number;
+  silver?: number;
+  bronze?: number;
+  bronzeLosers?: number;
 };

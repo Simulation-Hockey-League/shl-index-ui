@@ -8,6 +8,7 @@ import { League, leagueNameToId } from '../../utils/leagueHelpers';
 import { query } from '../../utils/query';
 
 import { PlayoffBracketSeries } from './PlayoffBracketSeries';
+import { hasMedalGames } from './shared';
 
 export const SingleBracket = ({
   data,
@@ -57,21 +58,39 @@ export const SingleBracket = ({
         className,
       )}
     >
-      {data.map((round, i) => (
-        <div className="flex w-[270px] flex-col items-center" key={i}>
-          <h2 className="mb-2.5 text-2xl font-bold">
-            {round.length === 1 ? 'Finals' : `Round ${i + 1}`}
-          </h2>
-          {round.map((series) => (
-            <PlayoffBracketSeries
-              key={`${series.team1.id}${series.team2.id}`}
-              series={series}
-              teamData={teamData}
-              league={league}
-            />
-          ))}
-        </div>
-      ))}
+      {data.map((round, i) => {
+        const isLastRound = i === data.length - 1;
+        const isMedalLeague = hasMedalGames(league);
+
+        return (
+          <div className="flex w-[270px] flex-col items-center" key={i}>
+            <h2 className="mb-2.5 text-2xl font-bold">
+              {isMedalLeague && isLastRound
+                ? round.length === 2
+                  ? 'Medal Games'
+                  : 'Gold Medal Game'
+                : round.length === 1
+                  ? 'Finals'
+                  : `Round ${i + 1}`}
+            </h2>
+            {round.map((series, j) => (
+              <PlayoffBracketSeries
+                key={`${series.team1.id}${series.team2.id}`}
+                series={series}
+                teamData={teamData}
+                league={league}
+                medalContext={
+                  isMedalLeague && isLastRound
+                    ? j === 0
+                      ? 'gold'
+                      : 'bronze'
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 };

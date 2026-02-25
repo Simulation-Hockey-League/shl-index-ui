@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { League, leagueNameToId } from 'utils/leagueHelpers';
 import { query } from 'utils/query';
+import { selectTeamReport } from 'utils/reportHelpers';
 
 import { SeasonTypeOption } from './useSeasonType';
 
@@ -20,7 +21,9 @@ export interface PlayerFilters extends BaseFilters {
   active: boolean;
   rookie: boolean;
 }
-export interface TeamFilters extends BaseFilters {}
+export interface TeamFilters extends BaseFilters {
+  report: selectTeamReport;
+}
 
 const defaultPlayerFilters: PlayerFilters = {
   league: 'shl',
@@ -41,6 +44,7 @@ const defaultTeamFilters: TeamFilters = {
   endSeason: 85,
   franchiseID: -1,
   grouped: true,
+  report: 'base',
 };
 
 export function useHistoryFilters(
@@ -149,7 +153,10 @@ export function useHistoryFilters(
                 ? router.query.rookie === 'true'
                 : (defaults as PlayerFilters).rookie,
           }
-        : baseUrlFilters;
+        : {
+            ...baseUrlFilters,
+            report: (router.query.selection as selectTeamReport) || 'base',
+          };
 
     setFiltersState(finalUrlFilters);
     setIsInitialized(true);
@@ -171,6 +178,10 @@ export function useHistoryFilters(
         if (playerFilters.minGP > 0) {
           query.minGP = String(playerFilters.minGP);
         }
+      }
+      if (type === 'team') {
+        const teamFilters = finalUrlFilters as TeamFilters;
+        query.selection = teamFilters.report;
       }
 
       if (finalUrlFilters.franchiseID >= 0) {
@@ -209,6 +220,11 @@ export function useHistoryFilters(
         }
         query.active = String(playerFilters.active);
         query.rookie = String(playerFilters.rookie);
+      }
+
+      if (type === 'team') {
+        const teamFilters = newFilters as TeamFilters;
+        query.selection = teamFilters.report;
       }
 
       if (newFilters.franchiseID >= 0) {
