@@ -23,6 +23,7 @@ const TeamLine = ({
   lostSeries,
   league,
   shouldUseTeamShortName,
+  medal,
 }: {
   teamInfo: {
     id: number;
@@ -37,6 +38,7 @@ const TeamLine = ({
   lostSeries: boolean;
   league: League;
   shouldUseTeamShortName?: boolean;
+  medal?: string;
 }) => {
   const router = useRouter();
 
@@ -69,14 +71,28 @@ const TeamLine = ({
       <span
         className={classnames(
           'pr-[5px]',
-          !shouldUseTeamShortName &&
-            'truncate',
+          !shouldUseTeamShortName && 'truncate',
           teamInfo.color.isDark ? 'text-grey100' : 'text-grey900',
         )}
       >
         {shouldUseTeamShortName ? teamInfo.abbr : teamInfo.name}
       </span>
-      <div className="ml-auto flex h-full w-5 items-center justify-center bg-grey900/50 px-[15px] font-mont text-2xl font-bold text-grey100">
+      {medal && (
+        <div
+          className={classnames(
+            'mx-1 ml-auto size-3 shrink-0 rounded-full',
+            medal === 'gold' && 'bg-yellow500',
+            medal === 'silver' && 'bg-grey400',
+            medal === 'bronze' && 'bg-bronze500',
+          )}
+        />
+      )}
+      <div
+        className={classnames(
+          'flex h-full w-5 items-center justify-center bg-grey900/50 px-[15px] font-mont text-2xl font-bold text-grey100',
+          !medal && 'ml-auto',
+        )}
+      >
         {teamInfo.wins !== -1 && teamInfo.wins}
       </div>
     </Link>
@@ -88,11 +104,13 @@ export const PlayoffBracketSeries = ({
   league,
   teamData,
   shouldUseTeamShortName = false,
+  medalContext,
 }: {
   series: Omit<PlayoffsSeries, 'league' | 'season'>;
   league: League;
   teamData: TeamInfo[];
   shouldUseTeamShortName?: boolean;
+  medalContext?: 'gold' | 'bronze';
 }) => {
   const primaryColors = useMemo(
     () => ({
@@ -146,24 +164,51 @@ export const PlayoffBracketSeries = ({
     return SeriesWinnerState.NOWINNER;
   }, [awayTeamInfo.wins, homeTeamInfo.wins, league]);
 
+  const [awayMedal, homeMedal] = useMemo(() => {
+    if (!medalContext || seriesWinner === SeriesWinnerState.NOWINNER)
+      return [undefined, undefined];
+
+    if (medalContext === 'gold') {
+      return seriesWinner === SeriesWinnerState.AWAY
+        ? ['gold', 'silver']
+        : ['silver', 'gold'];
+    }
+
+    return seriesWinner === SeriesWinnerState.AWAY
+      ? ['bronze', undefined]
+      : [undefined, 'bronze'];
+  }, [seriesWinner, medalContext]);
+
   return (
     <div
       className={classnames(
         'mb-1.5 flex flex-col items-center',
-        shouldUseTeamShortName ? 'w-[160px] p-2.5' : 'w-[230px]  p-5',
+        shouldUseTeamShortName ? 'w-[160px] p-2.5' : 'w-[230px] p-5',
       )}
     >
+      {medalContext && (
+        <span
+          className={classnames(
+            'mb-1 text-xs font-bold uppercase tracking-widest ',
+            medalContext === 'gold' ? 'text-yellow500' : 'text-bronze500',
+          )}
+        >
+          {medalContext === 'gold' ? 'Gold Medal Game' : 'Bronze Medal Game'}
+        </span>
+      )}
       <TeamLine
         league={league}
         lostSeries={seriesWinner === SeriesWinnerState.HOME}
         teamInfo={awayTeamInfo}
         shouldUseTeamShortName={shouldUseTeamShortName}
+        medal={awayMedal}
       />
       <TeamLine
         league={league}
         lostSeries={seriesWinner === SeriesWinnerState.AWAY}
         teamInfo={homeTeamInfo}
         shouldUseTeamShortName={shouldUseTeamShortName}
+        medal={homeMedal}
       />
     </div>
   );

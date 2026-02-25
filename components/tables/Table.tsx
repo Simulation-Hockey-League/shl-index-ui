@@ -123,7 +123,7 @@ export const Table = <T extends Record<string, unknown>>({
                     <td
                       key={cell.id}
                       className={classnames(
-                        'whitespace-nowrap border-t border-t-table p-4 text-center font-mont',
+                        'whitespace-nowrap border-t border-t-table p-2 text-center font-mont',
                         cell.column.getIsSorted() && 'bg-highlighted/10',
                       )}
                     >

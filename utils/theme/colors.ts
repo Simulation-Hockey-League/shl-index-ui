@@ -15,6 +15,8 @@ export const colorsRaw = {
     grey100: 'var(--grey100)',
     red200: 'var(--red200)',
     green500: 'var(--green500)',
+    yellow500: 'var(--yellow500)',
+    bronze500: 'var(--bronze500)',
   },
   border: {
     primary: 'var(--color-border-primary)',

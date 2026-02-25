@@ -1,3 +1,5 @@
+import { League, leagueNameToId } from 'utils/leagueHelpers';
+
 import { PlayoffsRound } from '../../pages/api/v1/standings/playoffs';
 
 export const LEAGUE_WIN_CONDITION = {
@@ -7,13 +9,18 @@ export const LEAGUE_WIN_CONDITION = {
   wjc: 1,
 };
 
+export const MEDAL_GAME_LEAGUES = [2, 3];
+
+export const hasMedalGames = (league: League) =>
+  MEDAL_GAME_LEAGUES.includes(leagueNameToId(league));
+
 export const BracketConference = {
   EASTERN: 0,
   WESTERN: 1,
   MIXED: -1,
 } as const;
 type BracketConference =
-  typeof BracketConference[keyof typeof BracketConference];
+  (typeof BracketConference)[keyof typeof BracketConference];
 
 export const getSeriesByConference = (
   round: PlayoffsRound,
