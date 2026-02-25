@@ -71,13 +71,12 @@ export default async (
   `;
 
   if (!Number.isNaN(+conference)) {
-    search.append(SQL` AND ConferenceID=${+conference}`);
+    search.append(SQL` AND t.ConferenceID=${+conference}`);
 
     if (+league !== 2 && +league !== 3 && !Number.isNaN(+division)) {
-      search.append(SQL` AND DivisionID=${+division}`);
+      search.append(SQL` AND t.DivisionID=${+division}`);
     }
   }
-
   const teams = await query(search);
 
   const parsed = teams.map((team) => ({
