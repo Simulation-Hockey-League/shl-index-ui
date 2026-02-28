@@ -59,7 +59,7 @@ export const SingleBracket = ({
       )}
     >
       {data.map((round, i) => {
-        const isLastRound = i === data.length - 1;
+        const isLastRound = i === data.length - 1 && round.length < 2;
         const isMedalLeague = hasMedalGames(league);
 
         return (
