@@ -22,6 +22,7 @@ export default async (
     type: longType = 'regular',
     limit = 10,
     desc = false,
+    rookie = 'false',
   } = req.query;
 
   let type: string;
@@ -61,8 +62,18 @@ export default async (
       ON s.TeamID = t.TeamID
       AND s.SeasonID = t.SeasonID
       AND s.LeagueID = t.LeagueID
+    LEFT JOIN player_rookie_season as prs
+      ON s.SeasonID = prs.RookieSeasonID 
+      AND s.LeagueID = prs.LeagueID
+      AND s.PlayerID = prs.PlayerID 
     WHERE s.LeagueID=${+league}
-    AND s.SeasonID=${season.SeasonID}
+    AND s.SeasonID=${season.SeasonID}`,
+      )
+      .append(
+        rookie === 'true' ? SQL` AND s.SeasonID = prs.RookieSeasonID` : SQL` `,
+      )
+      .append(
+        SQL`
     AND s.GP >= (
       SELECT MAX(GP) FROM `,
       )

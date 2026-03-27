@@ -33,9 +33,11 @@ type LeaderboardType =
 export const Leaderboard = ({
   league,
   leaderboardType,
+  rookie = false,
 }: {
   league: League;
   leaderboardType: LeaderboardType;
+  rookie: boolean;
 }) => {
   const { season } = useSeason();
   const { type } = useSeasonType();
@@ -60,6 +62,7 @@ export const Leaderboard = ({
       season,
       type,
       position,
+      rookie,
     ],
     queryFn: () => {
       const endpoint =
@@ -71,12 +74,13 @@ export const Leaderboard = ({
       const seasonTypeParam = type
         ? `&type=${seasonTypeToApiFriendlyParam(type)}`
         : '';
+      const rookieParam = rookie ? `&rookie=true` : '';
       return query(
         `api/v1/leaders${endpoint}/${
           leaderboardType.stat
         }?limit=10&league=${leagueNameToId(
           league,
-        )}${seasonParam}${positionParam}${seasonTypeParam}`,
+        )}${seasonParam}${positionParam}${seasonTypeParam}${rookieParam}`,
       );
     },
   });
@@ -147,8 +151,8 @@ export const Leaderboard = ({
                   {leaderboardType.stat === 'shotpct'
                     ? `${((player.stat ?? 0) * 100).toFixed(2)}%`
                     : leaderboardType.stat === 'gsaa'
-                    ? (player.stat ?? 0).toFixed(2)
-                    : player.stat}
+                      ? (player.stat ?? 0).toFixed(2)
+                      : player.stat}
                 </div>
               </div>
             </Skeleton>

@@ -16,17 +16,27 @@ export const HomepageLeaders = ({
   league,
   skaterType,
   stat,
+  rookie = 'false',
 }: {
   league: League;
   skaterType: 'skater' | 'goalie';
   stat: 'goals' | 'points' | 'wins' | 'shutouts';
+  rookie?: 'true' | 'false';
 }) => {
   const { season } = useSeason();
   const { type } = useSeasonType();
   const router = useRouter();
 
   const { data, isLoading } = useQuery<[LeaderboardPlayer]>({
-    queryKey: ['homepageLeaders', league, season, type, skaterType, stat],
+    queryKey: [
+      'homepageLeaders',
+      league,
+      season,
+      type,
+      skaterType,
+      stat,
+      rookie,
+    ],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
       const seasonTypeParam = type
@@ -35,7 +45,7 @@ export const HomepageLeaders = ({
       return query(
         `api/v1/leaders/${skaterType}s/${stat}?position=all&limit=1&league=${leagueNameToId(
           league,
-        )}${seasonParam}${seasonTypeParam}`,
+        )}${seasonParam}${seasonTypeParam} &rookie=${rookie}`,
       );
     },
   });

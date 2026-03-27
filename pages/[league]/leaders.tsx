@@ -1,8 +1,17 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  Switch,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+} from '@chakra-ui/react';
 import { Select } from 'components/common/Select';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { NextSeo } from 'next-seo';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Footer } from '../../components/Footer';
 import { Header } from '../../components/Header';
@@ -18,6 +27,7 @@ import { useRouterPageState } from '../../hooks/useRouterPageState';
 import { League } from '../../utils/leagueHelpers';
 
 export default ({ league }: { league: League }) => {
+  const [rookie, setRookie] = useState(false);
   const { tab, setRouterPageState } = useRouterPageState<{
     tab: LeaderboardTypes;
   }>({
@@ -48,7 +58,7 @@ export default ({ league }: { league: League }) => {
       />
       <Header league={league} activePage="leaders" />
       <div className="mx-auto w-full space-y-2 bg-primary py-6 sm:px-6 lg:w-3/4 lg:py-0 lg:pb-10 lg:pt-px">
-        <div className="mt-3 flex !h-7 flex-col items-center justify-center space-y-2 sm:mt-0 sm:flex-row sm:space-y-0 lg:float-right lg:inline-block">
+        <div className="mt-3 flex flex-col-reverse items-center gap-2 sm:mt-0 sm:flex-row sm:gap-3 lg:float-right lg:flex lg:items-center">
           <SeasonTypeSelector className="z-30 !h-7 w-48 lg:top-7" />
           <Select<LeaderboardTypes>
             options={leaderboardTypes}
@@ -60,11 +70,23 @@ export default ({ league }: { league: League }) => {
           />
         </div>
         <Tabs isLazy index={currentActiveTab} onChange={setCurrentActiveTab}>
-          <TabList className="mt-7 !hidden sm:!flex">
+          <TabList className="mt-7 !hidden sm:!flex sm:w-full">
             {leaderboardTypes.map((type) => (
               <Tab key={type}>{type}</Tab>
             ))}
           </TabList>
+          <div className="flex items-center justify-center py-2 sm:justify-end">
+            <FormControl display="flex" alignItems="center" w="auto" gap="1">
+              <FormLabel mb="0" className="!text-sm leading-none">
+                Rookies Only:
+              </FormLabel>
+              <Switch
+                id="rookie"
+                isChecked={rookie}
+                onChange={(e) => setRookie(e.target.checked)}
+              />
+            </FormControl>
+          </div>
           <TabPanels>
             {leaderboardTypes.map((type) => {
               if (type === 'Goalies') {
@@ -82,6 +104,7 @@ export default ({ league }: { league: League }) => {
                             playerType: type,
                             stat,
                           }}
+                          rookie={rookie}
                         />
                       ))}
                     </div>
@@ -100,6 +123,7 @@ export default ({ league }: { league: League }) => {
                           playerType: type,
                           stat,
                         }}
+                        rookie={rookie}
                       />
                     ))}
                   </div>
