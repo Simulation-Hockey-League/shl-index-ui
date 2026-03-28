@@ -70,8 +70,11 @@ export const LastFifteenTable = ({
                   aria-label={`${cellValue[2]} logo`}
                   className="size-[30px]"
                 />
+                <span className="inline text-left text-blue600 md:hidden">
+                  {cellValue[0]}
+                </span>
                 <span className="mx-2.5 my-0 hidden min-w-max text-left text-blue600 md:inline">
-                  {cellValue[1]} {cellValue[2]}
+                  {cellValue[1]}
                 </span>
               </Link>
             );
