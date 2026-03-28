@@ -6,8 +6,8 @@ import {
 } from '@tanstack/react-table';
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
-import { last_fifteen } from 'pages/api/v1/standings/last-fifteen';
 import { useMemo } from 'react';
+import { lastFifteen } from 'typings/api';
 
 import { League } from '../../utils/leagueHelpers';
 import { onlyIncludeSeasonAndTypeInQuery } from '../../utils/routingHelpers';
@@ -18,7 +18,7 @@ import { Table } from './Table';
 import { STANDINGS_TABLE } from './tableBehavioralFlags';
 import { TableHeader } from './TableHeader';
 
-const columnHelper = createColumnHelper<last_fifteen>();
+const columnHelper = createColumnHelper<lastFifteen>();
 
 const SkeletonCell = ({ wide = false }: { wide?: boolean }) => (
   <div
@@ -38,7 +38,7 @@ export const LastFifteenTable = ({
   isLoading = false,
 }: {
   league: League;
-  data: Array<last_fifteen>;
+  data: Array<lastFifteen>;
   title?: string;
   isLoading?: boolean;
 }) => {
@@ -167,6 +167,6 @@ export const LastFifteenTable = ({
   }
 
   return (
-    <Table<last_fifteen> table={table} tableBehavioralFlags={STANDINGS_TABLE} />
+    <Table<lastFifteen> table={table} tableBehavioralFlags={STANDINGS_TABLE} />
   );
 };
