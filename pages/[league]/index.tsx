@@ -1,13 +1,12 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { PlayerSearchNavigate } from 'components/history/SelectPlayerSerachNav';
+import { PlayerSearchNavigate } from 'components/history/SelectPlayerSearchNav';
 import { LastFifteenTable } from 'components/tables/LastFifteen';
 import { useSeason } from 'hooks/useSeason';
 import type { GetStaticPaths, GetStaticProps } from 'next/types';
 import { NextSeo } from 'next-seo';
-import { last_fifteen } from 'pages/api/v1/standings/last-fifteen';
-import { PlayerNames } from 'pages/api/v2/player/playerSearch';
 import { useMemo } from 'react';
+import { lastFifteen, PlayerNames } from 'typings/api';
 import { leagueNameToId } from 'utils/leagueHelpers';
 import { query } from 'utils/query';
 
@@ -28,7 +27,7 @@ export default ({ league }: { league: League }) => {
   });
 
   const { data: lastFifteen, isLoading: lastFifteenLoading } = useQuery<
-    last_fifteen[]
+    lastFifteen[]
   >({
     queryKey: ['lastFifteen', league, season],
     queryFn: () =>
@@ -55,15 +54,12 @@ export default ({ league }: { league: League }) => {
       />
       <Header league={league} />
       <div className="mx-auto my-0 w-full flex-1 overflow-visible bg-primary p-4 md:p-6 xl:w-3/4">
-        <div className="relative isolate z-10 mb-4">
-          <PlayerSearchNavigate players={playerSearch} league={league} />
-        </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
           <div className="md:col-span-3">
             <Tabs variant="soft-rounded" colorScheme="blue" isLazy>
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h2 className="mt-0 text-2xl font-bold">Hot 15</h2>
+                  <h3 className="pb-4 text-3xl font-bold">Trending Teams</h3>
                   <span className="text-sm font-normal text-secondary">
                     Teams performance over the last 15 games
                   </span>
@@ -108,6 +104,9 @@ export default ({ league }: { league: League }) => {
           </div>
 
           <div className="divide-y-2 divide-secondary md:col-span-1">
+            <div className="relative isolate z-10 mb-4">
+              <PlayerSearchNavigate players={playerSearch} league={league} />
+            </div>
             <h3 className="pb-4 text-3xl font-bold">League Leaders</h3>
             <HomepageLeaders league={league} skaterType="skater" stat="goals" />
             <HomepageLeaders

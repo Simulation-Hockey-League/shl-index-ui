@@ -1,8 +1,8 @@
 import fuzzysort from 'fuzzysort';
 import { useRouter } from 'next/router';
-import { PlayerNames } from 'pages/api/v2/player/playerSearch';
 import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { PlayerNames } from 'typings/api';
 
 interface PlayerSearchNavigateProps {
   players: PlayerNames[] | undefined;

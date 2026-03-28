@@ -391,3 +391,25 @@ export type TeamHistory = Partial<TeamInfo> & {
   bronze?: number;
   bronzeLosers?: number;
 };
+
+export type lastFifteen = {
+  SeasonID: number;
+  LeagueID: number;
+  TeamID: number;
+  Name: string;
+  Nickname: string;
+  Abbr: string;
+  ConferenceID: number;
+  GP: number;
+  Wins: number;
+  Losses: number;
+  OTL: number;
+  GF: number;
+  GA: number;
+  GoalDiff: number;
+};
+
+export type PlayerNames = {
+  PlayerID: number;
+  Name: string;
+};

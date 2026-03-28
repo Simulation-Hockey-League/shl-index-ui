@@ -9,23 +9,6 @@ const cors = Cors({
   methods: ['GET', 'HEAD'],
 });
 
-export type last_fifteen = {
-  SeasonID: number;
-  LeagueID: number;
-  TeamID: number;
-  Name: string;
-  Nickname: string;
-  Abbr: string;
-  ConferenceID: number;
-  GP: number;
-  Wins: number;
-  Losses: number;
-  OTL: number;
-  GF: number;
-  GA: number;
-  GoalDiff: number;
-};
-
 export default async (
   req: NextApiRequest,
   res: NextApiResponse,
