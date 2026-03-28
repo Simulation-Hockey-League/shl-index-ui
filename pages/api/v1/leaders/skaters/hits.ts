@@ -73,17 +73,17 @@ export default async (
       AND s.PlayerID = prs.PlayerID `,
       )
       .append(
+        SQL`
+        WHERE s.LeagueID=${+league}
+        AND s.SeasonID=${season.SeasonID}
+        `,
+      )
+      .append(
         position === 'd'
           ? 'AND ( r.LD = 20 OR r.RD = 20 )'
           : position === 'f'
             ? 'AND NOT ( r.LD = 20 OR r.RD = 20 )'
             : '',
-      )
-      .append(
-        SQL`
-                  WHERE s.LeagueID=${+league}
-                  AND s.SeasonID=${season.SeasonID}
-                  `,
       )
       .append(
         rookie === 'true' ? SQL` AND s.SeasonID = prs.RookieSeasonID` : SQL` `,
