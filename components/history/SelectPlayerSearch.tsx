@@ -1,7 +1,7 @@
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import fuzzysort from 'fuzzysort';
-import { PlayerNames } from 'pages/api/v2/player/playerSearch';
 import { useMemo, useState } from 'react';
+import { PlayerNames } from 'typings/api';
 
 interface PlayerSearchInputProps {
   players: PlayerNames[] | undefined;

@@ -3,11 +3,6 @@ import SQL from 'sql-template-strings';
 
 import { query } from '../../../../lib/db';
 
-export type PlayerNames = {
-  PlayerID: number;
-  Name: string;
-};
-
 export default async (
   req: NextApiRequest,
   res: NextApiResponse,

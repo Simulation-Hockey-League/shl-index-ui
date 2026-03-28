@@ -1080,6 +1080,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1125,6 +1131,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1170,6 +1182,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1215,6 +1233,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1260,6 +1284,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1305,6 +1335,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1350,6 +1386,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1395,6 +1437,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1440,6 +1488,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1485,6 +1539,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1530,6 +1590,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1575,6 +1641,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1620,6 +1692,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1665,6 +1743,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1710,6 +1794,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1755,6 +1845,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1800,6 +1896,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1845,6 +1947,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1890,6 +1998,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {
@@ -1935,6 +2049,12 @@
             "in": "query",
             "type": "number",
             "default": 10
+          },
+          {
+            "name": "rookie",
+            "in": "query",
+            "type": "boolean",
+            "default": "false"
           }
         ],
         "responses": {

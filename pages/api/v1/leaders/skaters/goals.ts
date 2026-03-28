@@ -23,6 +23,7 @@ export default async (
     position = 'all',
     limit = 10,
     desc = true,
+    rookie = 'false',
   } = req.query;
 
   let type: string;
@@ -65,21 +66,29 @@ export default async (
     INNER JOIN corrected_player_ratings as r
       ON s.SeasonID = r.SeasonID 
       AND s.LeagueID = r.LeagueID
-      AND s.PlayerID = r.PlayerID `,
+      AND s.PlayerID = r.PlayerID 
+    LEFT JOIN player_rookie_season as prs
+      ON s.SeasonID = prs.RookieSeasonID 
+      AND s.LeagueID = prs.LeagueID
+      AND s.PlayerID = prs.PlayerID `,
       )
       .append(
         position === 'd'
           ? 'AND ( r.LD = 20 OR r.RD = 20 )'
           : position === 'f'
-          ? 'AND NOT ( r.LD = 20 OR r.RD = 20 )'
-          : '',
+            ? 'AND NOT ( r.LD = 20 OR r.RD = 20 )'
+            : '',
       )
       .append(
         SQL`
-    WHERE s.LeagueID=${+league}
-    AND s.SeasonID=${season.SeasonID}
-    ORDER BY Goals `,
+            WHERE s.LeagueID=${+league}
+            AND s.SeasonID=${season.SeasonID}
+            `,
       )
+      .append(
+        rookie === 'true' ? SQL` AND s.SeasonID = prs.RookieSeasonID` : SQL` `,
+      )
+      .append(SQL` ORDER BY Goals `)
       .append(desc ? `DESC` : `ASC`).append(`
     LIMIT ${limit}
     `),
