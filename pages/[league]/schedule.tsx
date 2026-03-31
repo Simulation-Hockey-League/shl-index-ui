@@ -4,6 +4,7 @@ import { groupBy, isEmpty } from 'lodash';
 import { GetServerSideProps } from 'next';
 import { NextSeo } from 'next-seo';
 import { useCallback, useMemo } from 'react';
+import { GameRow } from 'typings/api';
 
 import { Select } from '../../components/common/Select';
 import { Footer } from '../../components/Footer';
@@ -15,7 +16,6 @@ import { useSeason } from '../../hooks/useSeason';
 import { useSeasonType } from '../../hooks/useSeasonType';
 import { League, leagueNameToId } from '../../utils/leagueHelpers';
 import { query } from '../../utils/query';
-import { Game } from '../api/v1/schedule';
 import { TeamInfo } from '../api/v1/teams';
 
 const getTeamsListData = async (league: League, season: number | undefined) => {
@@ -49,7 +49,7 @@ export default ({ league }: { league: League }) => {
     queryFn: () => getTeamsListData(league, season),
   });
 
-  const { data } = useQuery<Game[]>({
+  const { data } = useQuery<GameRow[]>({
     queryKey: ['schedule', league, season, type],
     queryFn: () => {
       const seasonParam = season ? `&season=${season}` : '';
@@ -92,16 +92,18 @@ export default ({ league }: { league: League }) => {
   const gamesByDate = useMemo(() => {
     return groupBy(
       data
-        ?.filter((game) => unplayedOnly === 'false' || !game.played)
+        ?.filter((game) => unplayedOnly === 'false' || !game.Played)
         .filter(
           (game) =>
             selectedTeam === -1 ||
-            game.awayTeam === selectedTeam ||
-            game.homeTeam === selectedTeam,
+            game.Away === selectedTeam ||
+            game.Home === selectedTeam,
         ),
-      (game) => game.date,
+      (game) => game.Date,
     );
   }, [data, selectedTeam, unplayedOnly]);
+
+  console.log(gamesByDate);
 
   return (
     <>
@@ -164,8 +166,8 @@ export default ({ league }: { league: League }) => {
                         .map((datePart) => parseInt(datePart));
 
                       return (
-                        new Date(aYear, aMonth, aDate).getTime() -
-                        new Date(bYear, bMonth, bDate).getTime()
+                        new Date(aYear, aMonth - 1, aDate).getTime() -
+                        new Date(bYear, bMonth - 1, bDate).getTime()
                       );
                     })
                     .map(([date, games]) => (

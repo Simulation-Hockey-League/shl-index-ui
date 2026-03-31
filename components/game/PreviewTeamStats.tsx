@@ -53,7 +53,7 @@ export const PreviewTeamStats = ({
     };
   }, [previewData]);
 
-  const titlePrefix = previewData?.game.played ? 'Seasonal ' : '';
+  const titlePrefix = previewData?.game.Played ? 'Seasonal ' : '';
 
   const awayColor = previewData?.teams.away.primaryColor;
   const homeColor = previewData?.teams.home.primaryColor;

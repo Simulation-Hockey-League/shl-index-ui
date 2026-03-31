@@ -112,14 +112,14 @@ export const GamePreviewStandings = ({
       'standings',
       league,
       'Regular Season',
-      previewData?.game.season,
+      previewData?.game.SeasonID,
       standingsType,
     ],
     queryFn: () => {
       return query(
         `api/v1/standings?league=${leagueNameToId(
           league,
-        )}&display=${standingsType}&season=${previewData?.game.season}`,
+        )}&display=${standingsType}&season=${previewData?.game.SeasonID}`,
       );
     },
     enabled: !!previewData,

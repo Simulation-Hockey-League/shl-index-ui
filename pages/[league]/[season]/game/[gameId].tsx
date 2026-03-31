@@ -60,7 +60,7 @@ export default ({ gameId, league }: { gameId: string; league: League }) => {
           <>
             <div className="flex h-fit w-full flex-col justify-between gap-2.5 sm:w-[300px]">
               <PreviewTeamStats league={league} previewData={gameData} />
-              {gameData?.game.type === 'Regular Season' && (
+              {gameData?.game.Type === 'Regular Season' && (
                 <GamePreviewStandings league={league} previewData={gameData} />
               )}
             </div>

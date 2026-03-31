@@ -587,12 +587,12 @@ export const BoxscoreTeamRosters = ({
   }>({
     queryKey: [
       `gameBoxscoreSkaters`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -603,12 +603,12 @@ export const BoxscoreTeamRosters = ({
   }>({
     queryKey: [
       `gameBoxscoreGoalies`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/goalies?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/goalies?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });

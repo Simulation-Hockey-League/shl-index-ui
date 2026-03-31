@@ -1,10 +1,10 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { GameRow } from 'typings/api';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
-import { Game } from '../../../v1/schedule';
 import {
   TeamIdentity,
   TeamRecordRow,
@@ -16,7 +16,7 @@ const cors = Cors({
 });
 
 export type GamePreviewData = {
-  game: Game;
+  game: GameRow;
   teams: {
     away: TeamIdentity;
     home: TeamIdentity;
@@ -130,19 +130,19 @@ export default async (
 
   res.status(200).json({
     game: {
-      season: game.SeasonID,
-      league: game.LeagueID,
-      date: game.Date,
-      homeTeam: game.Home,
-      homeScore: game.HomeScore,
-      awayTeam: game.Away,
-      awayScore: game.AwayScore,
-      type: game.Type,
-      played: game.Played,
-      overtime: game.Overtime,
-      shootout: game.Shootout,
-      slug: game.Slug,
-      gameid: game.GameID,
+      SeasonID: game.SeasonID,
+      LeagueID: game.LeagueID,
+      Date: game.Date,
+      Home: game.Home,
+      HomeScore: game.HomeScore,
+      Away: game.Away,
+      AwayScore: game.AwayScore,
+      Type: game.Type,
+      Played: game.Played,
+      OverTime: game.Overtime,
+      Shootout: game.Shootout,
+      Slug: game.Slug,
+      GameID: game.GameID,
     },
     teams: {
       away: {

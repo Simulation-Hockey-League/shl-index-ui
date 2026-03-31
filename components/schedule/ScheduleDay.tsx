@@ -1,4 +1,5 @@
-import { Game } from '../../pages/api/v1/schedule';
+import { GameRow } from 'typings/api';
+
 import { TeamInfo } from '../../pages/api/v1/teams';
 import { League } from '../../utils/leagueHelpers';
 
@@ -12,7 +13,7 @@ export const ScheduleDay = ({
 }: {
   league: League;
   date: string;
-  games: Game[];
+  games: GameRow[];
   teamData: TeamInfo[];
 }) => {
   return (
@@ -23,7 +24,7 @@ export const ScheduleDay = ({
       {games.map((game) => (
         <ScheduleGameMatchup
           game={game}
-          key={game.slug}
+          key={game.Slug}
           league={league}
           teamData={teamData}
         />

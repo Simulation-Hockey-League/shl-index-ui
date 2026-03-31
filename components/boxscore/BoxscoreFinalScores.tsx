@@ -78,8 +78,8 @@ const TeamFinalScoreRow = ({
       </div>
     </TableCell>
     {data?.periodByPeriodStats.map((period, i) => {
-      if (i === 3 && !gameData?.game.overtime) return null;
-      if (i === 4 && !gameData?.game.shootout) return null;
+      if (i === 3 && !gameData?.game.Overtime) return null;
+      if (i === 4 && !gameData?.game.Shootout) return null;
       return (
         <TableCell isLoading={isLoading} key={i}>
           {period[team].goals}
@@ -87,7 +87,7 @@ const TeamFinalScoreRow = ({
       );
     })}
     <TableCell className="font-semibold" isLoading={isLoading}>
-      {team === 'away' ? gameData?.game.awayScore : gameData?.game.homeScore}
+      {team === 'away' ? gameData?.game.AwayScore : gameData?.game.HomeScore}
     </TableCell>
   </div>
 );
@@ -102,18 +102,18 @@ export const BoxscoreFinalScores = ({
   const { data, isLoading } = useQuery<BoxscoreSummary>({
     queryKey: [
       `gameBoxscoreSummary`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
 
   const final = `Final${
-    gameData?.game.shootout ? ' (SO)' : gameData?.game.overtime ? ' (OT)' : ''
+    gameData?.game.Shootout ? ' (SO)' : gameData?.game.Overtime ? ' (OT)' : ''
   }`;
 
   return (
@@ -125,8 +125,8 @@ export const BoxscoreFinalScores = ({
         <TableCell>1ST</TableCell>
         <TableCell>2ND</TableCell>
         <TableCell>3RD</TableCell>
-        {!!gameData?.game.overtime && <TableCell>OT</TableCell>}
-        {!!gameData?.game.shootout && <TableCell>SO</TableCell>}
+        {!!gameData?.game.Overtime && <TableCell>OT</TableCell>}
+        {!!gameData?.game.Shootout && <TableCell>SO</TableCell>}
         <TableCell className="font-semibold">T</TableCell>
       </div>
       <TeamFinalScoreRow

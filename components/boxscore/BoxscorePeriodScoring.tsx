@@ -223,12 +223,12 @@ export const BoxscorePeriodScoring = ({
   const { data } = useQuery<BoxscoreScoring[]>({
     queryKey: [
       `gameBoxscoreScoring`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/scoring?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/scoring?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -298,7 +298,7 @@ export const BoxscorePeriodScoring = ({
           period="3rd"
           isFHM10={isFHM10}
         />
-        {!!gameData.game.overtime && (
+        {!!gameData.game.Overtime && (
           <PeriodScoringColumn
             league={league}
             data={periodByPeriodScoring[0]}
@@ -308,7 +308,7 @@ export const BoxscorePeriodScoring = ({
             isFHM10={isFHM10}
           />
         )}
-        {!!gameData.game.shootout && (
+        {!!gameData.game.Shootout && (
           <PeriodScoringColumn
             league={league}
             data={periodByPeriodScoring[4]}

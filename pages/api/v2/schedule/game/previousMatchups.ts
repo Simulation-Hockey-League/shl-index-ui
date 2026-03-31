@@ -1,10 +1,10 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { GameRow } from 'typings/api';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
-import { convertGameRowToGame, GameRow } from '../../../v1/schedule';
 
 const cors = Cors({
   methods: ['GET', 'HEAD'],
@@ -34,9 +34,5 @@ export default async (
     return;
   }
 
-  const parsedPreviousMatchups = previousMatchups.map((game) =>
-    convertGameRowToGame(game),
-  );
-
-  res.status(200).json(parsedPreviousMatchups);
+  res.status(200).json(previousMatchups);
 };

@@ -18,20 +18,20 @@ export const GamePreview = ({
   const router = useRouter();
 
   const final = `Final${
-    previewData?.game.shootout
+    previewData?.game.Shootout
       ? ' (SO)'
-      : previewData?.game.overtime
-      ? ' (OT)'
-      : ''
+      : previewData?.game.Overtime
+        ? ' (OT)'
+        : ''
   }`;
 
   return (
     <div className="flex h-fit w-full flex-col bg-primary p-4 pt-0">
       <div className="mb-2.5 flex border-b-4 border-b-grey300 py-2.5 font-mont text-sm font-semibold">
         <Skeleton isLoaded={!!previewData}>
-          <span className="text-sm">{previewData?.game.date}</span>
+          <span className="text-sm">{previewData?.game.Date}</span>
         </Skeleton>
-        {!!previewData?.game.played && <div className="ml-auto">{final}</div>}
+        {!!previewData?.game.Played && <div className="ml-auto">{final}</div>}
       </div>
       <div className="flex flex-col justify-between md:flex-row">
         <div className="flex w-full items-center justify-between md:w-[45%]">
@@ -54,7 +54,7 @@ export const GamePreview = ({
                   pathname: '/[league]/team/[teamid]',
                   query: {
                     ...onlyIncludeSeasonAndTypeInQuery(router.query),
-                    teamid: previewData?.game.awayTeam,
+                    teamid: previewData?.game.Away,
                   },
                 }}
                 className="font-semibold"
@@ -70,15 +70,15 @@ export const GamePreview = ({
             </Skeleton>
           </div>
 
-          {!!previewData?.game.played && (
+          {!!previewData?.game.Played && (
             <div
               className={classnames(
                 'font-mont text-4xl font-semibold',
-                previewData?.game.awayScore < previewData?.game.homeScore &&
+                previewData?.game.AwayScore < previewData?.game.HomeScore &&
                   'text-tertiary',
               )}
             >
-              {previewData?.game.awayScore}
+              {previewData?.game.AwayScore}
             </div>
           )}
         </div>
@@ -102,7 +102,7 @@ export const GamePreview = ({
                   pathname: '/[league]/team/[teamid]',
                   query: {
                     ...onlyIncludeSeasonAndTypeInQuery(router.query),
-                    teamid: previewData?.game.homeTeam,
+                    teamid: previewData?.game.Home,
                   },
                 }}
                 className="font-semibold"
@@ -117,15 +117,15 @@ export const GamePreview = ({
               </span>
             </Skeleton>
           </div>
-          {!!previewData?.game.played && (
+          {!!previewData?.game.Played && (
             <div
               className={classnames(
                 'font-mont text-4xl font-semibold md:order-first',
-                previewData?.game.homeScore < previewData?.game.awayScore &&
+                previewData?.game.HomeScore < previewData?.game.AwayScore &&
                   'text-tertiary',
               )}
             >
-              {previewData?.game.homeScore}
+              {previewData?.game.HomeScore}
             </div>
           )}
         </div>

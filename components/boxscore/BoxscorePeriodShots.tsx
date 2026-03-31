@@ -17,12 +17,12 @@ export const BoxscorePeriodShots = ({
   const { data } = useQuery<BoxscoreSummary>({
     queryKey: [
       `gameBoxscoreSummary`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -33,7 +33,7 @@ export const BoxscorePeriodShots = ({
         if (
           period.away.shots === undefined ||
           period.home.shots === undefined ||
-          (i === 3 && !gameData?.game.overtime)
+          (i === 3 && !gameData?.game.Overtime)
         )
           return [];
         return {
@@ -41,7 +41,7 @@ export const BoxscorePeriodShots = ({
           awayShots: period.away.shots,
         };
       }),
-    [data?.periodByPeriodStats, gameData?.game.overtime],
+    [data?.periodByPeriodStats, gameData?.game.Overtime],
   );
 
   if (!gameData || !shotsByPeriod) {

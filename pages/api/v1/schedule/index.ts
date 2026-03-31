@@ -2,6 +2,7 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { GameRow } from 'typings/api';
 
 import { query } from '../../../../lib/db';
 import use from '../../../../lib/middleware';
@@ -11,55 +12,7 @@ const cors = Cors({
 });
 
 const seasonTypes = ['Pre-Season', 'Regular Season', 'Playoffs'] as const;
-export type SeasonType = typeof seasonTypes[number];
-
-export type GameRow = {
-  Slug: string;
-  SeasonID: number;
-  LeagueID: number;
-  Date: string;
-  Home: number;
-  HomeScore: number;
-  Away: number;
-  AwayScore: number;
-  Overtime: number;
-  Shootout: number;
-  Played: number;
-  Type: SeasonType;
-  GameID: number | null;
-};
-
-export type Game = {
-  slug: string;
-  season: number;
-  league: number;
-  date: string;
-  homeTeam: number;
-  homeScore: number;
-  awayTeam: number;
-  awayScore: number;
-  overtime: number;
-  shootout: number;
-  played: number;
-  type: SeasonType;
-  gameid: number | null;
-};
-
-export const convertGameRowToGame = (game: GameRow): Game => ({
-  season: game.SeasonID,
-  league: game.LeagueID,
-  date: game.Date,
-  homeTeam: game.Home,
-  homeScore: game.HomeScore,
-  awayTeam: game.Away,
-  awayScore: game.AwayScore,
-  type: game.Type,
-  played: game.Played,
-  overtime: game.Overtime,
-  shootout: game.Shootout,
-  slug: game.Slug,
-  gameid: game.GameID,
-});
+export type SeasonType = (typeof seasonTypes)[number];
 
 export default async (
   req: NextApiRequest,
@@ -90,9 +43,6 @@ export default async (
     search.append(SQL`AND Type=${type}`);
   }
 
-  const schedule = await query(search);
-
-  const parsed: Game[] = schedule.map((game) => convertGameRowToGame(game));
-
-  res.status(200).json(parsed);
+  const schedule = await query<GameRow[]>(search);
+  res.status(200).json(schedule);
 };

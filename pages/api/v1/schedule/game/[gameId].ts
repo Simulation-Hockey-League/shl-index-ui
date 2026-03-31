@@ -2,8 +2,8 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { GameRow } from 'typings/api';
 
-import { Game, convertGameRowToGame, GameRow } from '..';
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
 
@@ -50,7 +50,7 @@ export interface GoalieStats {
 }
 
 export interface Matchup {
-  game: Game;
+  game: GameRow;
   teams: {
     away: TeamIdentity;
     home: TeamIdentity;
@@ -67,7 +67,7 @@ export interface Matchup {
     away: Array<GoalieStats>;
     home: Array<GoalieStats>;
   };
-  previousMatchups: Array<Game>;
+  previousMatchups: Array<GameRow>;
 }
 
 const parseGamesPlayed = (record: TeamRecordRow) =>
@@ -194,10 +194,6 @@ export default async (
     const skaterStats = await query(skaterStatsSearch);
     const goalieStats = await query(goalieStatsSearch);
 
-    const parsedPrevMatchups = previousMatchups.map((game) =>
-      convertGameRowToGame(game),
-    );
-
     const response: Matchup = {
       game: {
         season: game.SeasonID,
@@ -274,7 +270,7 @@ export default async (
             shutouts: goalie.Shutouts,
           })),
       },
-      previousMatchups: parsedPrevMatchups,
+      previousMatchups: previousMatchups,
     };
 
     res.status(200).json(response);

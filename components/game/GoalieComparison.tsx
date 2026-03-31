@@ -62,8 +62,8 @@ const VerticalGoalieList = ({
                       {currentStat === 'savePct'
                         ? goalie[currentStat].toFixed(3).padEnd(4, '0')
                         : currentStat === 'record'
-                        ? assertUnreachable(currentStat as never)
-                        : goalie[currentStat]}
+                          ? assertUnreachable(currentStat as never)
+                          : goalie[currentStat]}
                     </span>
                   </div>
                 );
@@ -89,15 +89,15 @@ export const GoalieComparison = ({
   }>({
     queryKey: [
       `gamePreviewGoalieStats`,
-      previewData?.game.league,
-      previewData?.game.season,
-      previewData?.game.type,
-      previewData?.game.awayTeam,
-      previewData?.game.homeTeam,
+      previewData?.game.LeagueID,
+      previewData?.game.SeasonID,
+      previewData?.game.Type,
+      previewData?.game.Away,
+      previewData?.game.Home,
     ],
     queryFn: () =>
       query(
-        `api/v2/schedule/game/goalieStats?league=${previewData?.game.league}&season=${previewData?.game.season}&type=${previewData?.game.type}&away=${previewData?.game.awayTeam}&home=${previewData?.game.homeTeam}`,
+        `api/v2/schedule/game/goalieStats?league=${previewData?.game.LeagueID}&season=${previewData?.game.SeasonID}&type=${previewData?.game.Type}&away=${previewData?.game.Away}&home=${previewData?.game.Home}`,
       ),
     enabled: !!previewData,
   });
@@ -165,14 +165,14 @@ export const GoalieComparison = ({
                             (currentStat === 'record'
                               ? `${awayGoalie.wins}-${awayGoalie.losses}-${awayGoalie.OT}`
                               : currentStat === 'savePct'
-                              ? awayGoalie[currentStat]
-                                  .toFixed(3)
-                                  .padEnd(5, '0')
-                              : currentStat === 'GAA'
-                              ? awayGoalie[currentStat]
-                                  .toFixed(2)
-                                  .padEnd(4, '0')
-                              : awayGoalie[currentStat])}
+                                ? awayGoalie[currentStat]
+                                    .toFixed(3)
+                                    .padEnd(5, '0')
+                                : currentStat === 'GAA'
+                                  ? awayGoalie[currentStat]
+                                      .toFixed(2)
+                                      .padEnd(4, '0')
+                                  : awayGoalie[currentStat])}
                         </div>
                         <span className="font-semibold text-grey800">
                           {statLabels[currentStat]}
@@ -182,14 +182,14 @@ export const GoalieComparison = ({
                             (currentStat === 'record'
                               ? `${homeGoalie.wins}-${homeGoalie.losses}-${homeGoalie.OT}`
                               : currentStat === 'savePct'
-                              ? homeGoalie[currentStat]
-                                  .toFixed(3)
-                                  .padEnd(5, '0')
-                              : currentStat === 'GAA'
-                              ? homeGoalie[currentStat]
-                                  .toFixed(2)
-                                  .padEnd(4, '0')
-                              : homeGoalie[currentStat])}
+                                ? homeGoalie[currentStat]
+                                    .toFixed(3)
+                                    .padEnd(5, '0')
+                                : currentStat === 'GAA'
+                                  ? homeGoalie[currentStat]
+                                      .toFixed(2)
+                                      .padEnd(4, '0')
+                                  : homeGoalie[currentStat])}
                         </div>
                       </div>
                     );

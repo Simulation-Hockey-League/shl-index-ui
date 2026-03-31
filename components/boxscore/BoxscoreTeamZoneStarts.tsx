@@ -17,12 +17,12 @@ export const BoxscoreTeamZoneStarts = ({
   }>({
     queryKey: [
       `gameBoxscoreSkaters`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });

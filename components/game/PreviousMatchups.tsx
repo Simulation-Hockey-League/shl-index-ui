@@ -2,8 +2,8 @@ import { Spinner } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
+import { GameRow } from 'typings/api';
 
-import { Game } from '../../pages/api/v1/schedule';
 import { GamePreviewData } from '../../pages/api/v2/schedule/game/preview';
 import { League } from '../../utils/leagueHelpers';
 import { query } from '../../utils/query';
@@ -18,19 +18,20 @@ export const PreviousMatchups = ({
   league: League;
   previewData: GamePreviewData | undefined;
 }) => {
+  console.log(previewData);
   const router = useRouter();
-  const { data } = useQuery<Game[]>({
+  const { data } = useQuery<GameRow[]>({
     queryKey: [
       `previousMatchups`,
-      previewData?.game.league,
-      previewData?.game.season,
-      previewData?.game.type,
-      previewData?.game.awayTeam,
-      previewData?.game.homeTeam,
+      previewData?.game.LeagueID,
+      previewData?.game.SeasonID,
+      previewData?.game.Type,
+      previewData?.game.Away,
+      previewData?.game.Home,
     ],
     queryFn: () =>
       query(
-        `api/v2/schedule/game/previousMatchups?league=${previewData?.game.league}&season=${previewData?.game.season}&type=${previewData?.game.type}&away=${previewData?.game.awayTeam}&home=${previewData?.game.homeTeam}`,
+        `api/v2/schedule/game/previousMatchups?league=${previewData?.game.LeagueID}&season=${previewData?.game.SeasonID}&type=${previewData?.game.Type}&away=${previewData?.game.Away}&home=${previewData?.game.Home}`,
       ),
     enabled: !!previewData,
   });
@@ -46,7 +47,7 @@ export const PreviousMatchups = ({
   return (
     <div className="flex flex-col bg-primary">
       <div className="border-b-2 border-b-grey300 px-4 py-2.5 font-semibold">
-        {previewData.game.type} Series
+        {previewData.game.Type} Series
       </div>
       {data.length === 0 ? (
         <div className="flex flex-col bg-primary px-4 py-2.5">
@@ -56,23 +57,23 @@ export const PreviousMatchups = ({
         <div className="divide-y-2 divide-grey300">
           {data.map((matchup) => {
             const awayTeamInfo =
-              matchup.awayTeam === previewData.game.awayTeam
+              matchup.Away === previewData.game.Away
                 ? previewData.teams.away
                 : previewData.teams.home;
 
             const homeTeamInfo =
-              matchup.homeTeam === previewData.game.homeTeam
+              matchup.Home === previewData.game.Home
                 ? previewData.teams.home
                 : previewData.teams.away;
 
             return (
               <Link
-                key={matchup.slug}
+                key={matchup.Slug}
                 href={{
-                  pathname: `/[league]/${previewData.game.season}/game/[gameid]`,
+                  pathname: `/[league]/${previewData.game.SeasonID}/game/[gameid]`,
                   query: {
                     ...onlyIncludeSeasonAndTypeInQuery(router.query),
-                    gameid: matchup.slug,
+                    gameid: matchup.Slug,
                   },
                 }}
                 className={classnames(
@@ -80,7 +81,7 @@ export const PreviousMatchups = ({
                 )}
               >
                 <span className="mb-1.5 font-mont text-sm font-medium">
-                  {matchup.date} {matchup.played ? ' • Final' : ' • Not Played'}
+                  {matchup.Date} {matchup.Played ? ' • Final' : ' • Not Played'}
                 </span>
                 <div className="mb-1.5 flex items-center justify-between font-mont text-sm font-medium">
                   <div className="flex items-center">
@@ -94,11 +95,11 @@ export const PreviousMatchups = ({
                   <span
                     className={classnames(
                       'text-base',
-                      matchup.awayScore < matchup.homeScore && 'text-grey500',
-                      !matchup.played && 'hidden',
+                      matchup.AwayScore < matchup.HomeScore && 'text-grey500',
+                      !matchup.Played && 'hidden',
                     )}
                   >
-                    {matchup.awayScore}
+                    {matchup.AwayScore}
                   </span>
                 </div>
                 <div className="mb-1.5 flex items-center justify-between font-mont text-sm font-medium">
@@ -113,11 +114,11 @@ export const PreviousMatchups = ({
                   <span
                     className={classnames(
                       'text-base',
-                      matchup.homeScore < matchup.awayScore && 'text-grey500',
-                      !matchup.played && 'hidden',
+                      matchup.HomeScore < matchup.AwayScore && 'text-grey500',
+                      !matchup.Played && 'hidden',
                     )}
                   >
-                    {matchup.homeScore}
+                    {matchup.HomeScore}
                   </span>
                 </div>
               </Link>

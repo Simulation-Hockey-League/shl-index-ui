@@ -79,12 +79,12 @@ export const BoxscorePeriodPenalties = ({
   const { data } = useQuery<BoxscorePenalties[]>({
     queryKey: [
       `gameBoxscorePenalties`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v2/schedule/game/boxscore/penalties?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v2/schedule/game/boxscore/penalties?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -120,7 +120,7 @@ export const BoxscorePeriodPenalties = ({
           data={penaltiesByPeriod[3]}
           gameData={gameData}
         />
-        {!!gameData.game.overtime && (
+        {!!gameData.game.Overtime && (
           <PeriodPenaltiesColumn
             period="OT"
             data={penaltiesByPeriod[0]}

@@ -165,12 +165,12 @@ export const BoxscoreTeamStats = ({
   const { data, isLoading } = useQuery<BoxscoreSummary>({
     queryKey: [
       `gameBoxscoreSummary`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -179,7 +179,7 @@ export const BoxscoreTeamStats = ({
     <div className="flex w-full flex-col bg-primary p-4 pt-0">
       <div className="mb-2.5 flex border-b-4 border-b-grey300 py-2.5 font-mont text-sm font-semibold">
         <Skeleton isLoaded={!!gameData}>
-          <span className="text-sm">{gameData?.game.date}</span>
+          <span className="text-sm">{gameData?.game.Date}</span>
         </Skeleton>
       </div>
       <div className="flex w-full items-center py-2.5">

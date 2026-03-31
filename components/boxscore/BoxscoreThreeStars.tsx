@@ -30,7 +30,7 @@ const StarRow = ({
   };
 }) => {
   const starInfo = useMemo(() => {
-    const starTeam = star.team === gameData.game.homeTeam ? 'home' : 'away';
+    const starTeam = star.team === gameData.game.Home ? 'home' : 'away';
 
     const maybeStar1IfSkater = skatersData[starTeam].find(
       ({ id }) => id === star.id,
@@ -40,12 +40,12 @@ const StarRow = ({
     );
 
     return maybeStar1IfSkater ?? maybeStar1IfGoalie;
-  }, [gameData.game.homeTeam, goaliesData, skatersData, star.id, star.team]);
+  }, [gameData.game.Home, goaliesData, skatersData, star.id, star.team]);
 
   if (!starInfo) return null;
 
   const starTeamAbbreviation =
-    star.team === gameData.game.homeTeam
+    star.team === gameData.game.Home
       ? gameData.teams.home.abbr
       : gameData.teams.away.abbr;
 
@@ -79,12 +79,12 @@ export const BoxscoreThreeStars = ({
   const { data } = useQuery<BoxscoreSummary>({
     queryKey: [
       `gameBoxscoreSummary`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/summary?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -95,12 +95,12 @@ export const BoxscoreThreeStars = ({
   }>({
     queryKey: [
       `gameBoxscoreSkaters`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/skaters?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });
@@ -111,12 +111,12 @@ export const BoxscoreThreeStars = ({
   }>({
     queryKey: [
       `gameBoxscoreGoalies`,
-      gameData?.game.league,
-      gameData?.game.gameid,
+      gameData?.game.LeagueID,
+      gameData?.game.GameID,
     ],
     queryFn: () =>
       query(
-        `api/v3/schedule/game/boxscore/goalies?league=${gameData?.game.league}&gameid=${gameData?.game.gameid}`,
+        `api/v3/schedule/game/boxscore/goalies?league=${gameData?.game.LeagueID}&gameid=${gameData?.game.GameID}`,
       ),
     enabled: !!gameData,
   });

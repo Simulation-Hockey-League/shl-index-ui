@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { GameRow } from 'typings/api';
 
-import { Game } from '../../pages/api/v1/schedule';
 import { TeamInfo } from '../../pages/api/v1/teams';
 import { League } from '../../utils/leagueHelpers';
 import { onlyIncludeSeasonAndTypeInQuery } from '../../utils/routingHelpers';
@@ -17,7 +17,7 @@ const ScheduleMatchupTeam = ({
   teamType,
 }: {
   league: League;
-  game: Game;
+  game: GameRow;
   teamData: TeamInfo[];
   winner: 'home' | 'away' | 'none';
   teamType: 'Home' | 'Away';
@@ -25,21 +25,21 @@ const ScheduleMatchupTeam = ({
   const { teamId, teamScore } = useMemo(() => {
     if (teamType === 'Away') {
       return {
-        teamId: game.awayTeam,
-        teamScore: game.awayScore,
+        teamId: game.Away,
+        teamScore: game.AwayScore,
       };
     }
     return {
-      teamId: game.homeTeam,
-      teamScore: game.homeScore,
+      teamId: game.Home,
+      teamScore: game.HomeScore,
     };
-  }, [game.awayScore, game.awayTeam, game.homeScore, game.homeTeam, teamType]);
+  }, [game.AwayScore, game.Away, game.HomeScore, game.Home, teamType]);
 
   const team = useMemo(
     () => teamData.find((team) => team.id === teamId),
     [teamData, teamId],
   );
-  const winNote = game.shootout ? '(SO)' : game.overtime ? '(OT)' : '';
+  const winNote = game.Shootout ? '(SO)' : game.Overtime ? '(OT)' : '';
   return (
     <div
       className={classnames(
@@ -70,12 +70,12 @@ export const ScheduleGameMatchup = ({
   teamData,
 }: {
   league: League;
-  game: Game;
+  game: GameRow;
   teamData: TeamInfo[];
 }) => {
   const { query } = useRouter();
-  const winner = game.played
-    ? game.awayScore < game.homeScore
+  const winner = game.Played
+    ? game.AwayScore < game.HomeScore
       ? 'home'
       : 'away'
     : 'none';
@@ -83,10 +83,10 @@ export const ScheduleGameMatchup = ({
   return (
     <Link
       href={{
-        pathname: `/[league]/${game.season}/game/[gameid]`,
+        pathname: `/[league]/${game.SeasonID}/game/[gameid]`,
         query: {
           ...onlyIncludeSeasonAndTypeInQuery(query),
-          gameid: game.slug,
+          gameid: game.Slug,
         },
       }}
       className="flex flex-col border-b-2 border-b-table px-2.5 py-1 hover:bg-secondary"

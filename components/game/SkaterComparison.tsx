@@ -38,15 +38,15 @@ export const SkaterComparison = ({
   }>({
     queryKey: [
       `gamePreviewSkaterStats`,
-      previewData?.game.league,
-      previewData?.game.season,
-      previewData?.game.type,
-      previewData?.game.awayTeam,
-      previewData?.game.homeTeam,
+      previewData?.game.LeagueID,
+      previewData?.game.SeasonID,
+      previewData?.game.Type,
+      previewData?.game.Away,
+      previewData?.game.Home,
     ],
     queryFn: () =>
       query(
-        `api/v2/schedule/game/skaterStats?league=${previewData?.game.league}&season=${previewData?.game.season}&type=${previewData?.game.type}&away=${previewData?.game.awayTeam}&home=${previewData?.game.homeTeam}`,
+        `api/v2/schedule/game/skaterStats?league=${previewData?.game.LeagueID}&season=${previewData?.game.SeasonID}&type=${previewData?.game.Type}&away=${previewData?.game.Away}&home=${previewData?.game.Home}`,
       ),
     enabled: !!previewData,
   });
@@ -103,7 +103,7 @@ export const SkaterComparison = ({
     return initial;
   }, [data]);
 
-  const title = previewData?.game.played ? 'Team Leaders' : 'Players To Watch';
+  const title = previewData?.game.Played ? 'Team Leaders' : 'Players To Watch';
 
   return (
     <GamePreviewCard
@@ -155,10 +155,7 @@ export const SkaterComparison = ({
                   {leaders.home.value}
                 </span>
               </Skeleton>
-              <Skeleton
-                isLoaded={!isLoading}
-                className="truncate text-right"
-              >
+              <Skeleton isLoaded={!isLoading} className="truncate text-right">
                 <span className="inline-block text-sm lg:hidden">
                   {getPlayerShortname(leaders.home.player)}
                 </span>
