@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -85,6 +86,20 @@ export const ScheduleTable = ({
           cell: ({ row }) => (
             <span className="text-sm text-primary">{row.original.date}</span>
           ),
+        },
+      ),
+      columnHelper.accessor(
+        (row) => {
+          const opponentId =
+            row.homeTeam === selectedTeamId ? row.awayTeam : row.homeTeam;
+          return teamsById.get(opponentId)?.name ?? '';
+        },
+        {
+          id: 'opponent-name',
+          enableGlobalFilter: true,
+          enableSorting: false,
+          header: () => null,
+          cell: () => null,
         },
       ),
       columnHelper.accessor(
@@ -241,11 +256,15 @@ export const ScheduleTable = ({
     data: rollingGames,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
         pageSize: 66,
         pageIndex: 0,
+      },
+      columnVisibility: {
+        'opponent-name': false,
       },
       sorting: [{ id: 'game-date', desc: false }],
     },

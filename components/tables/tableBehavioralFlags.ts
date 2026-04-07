@@ -21,7 +21,7 @@ export const GAMES_TABLE: TableBehavioralFlags = {
   showTableFooter: false,
   showCSVExportButton: true,
   enablePagination: true,
-  enableFiltering: false,
+  enableFiltering: true,
   showTableFilterOptions: false,
 };
 
