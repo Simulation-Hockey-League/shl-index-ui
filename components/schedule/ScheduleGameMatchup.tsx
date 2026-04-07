@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { Game } from 'typings/api';
 
-import { Game } from '../../pages/api/v1/schedule';
 import { TeamInfo } from '../../pages/api/v1/teams';
 import { League } from '../../utils/leagueHelpers';
 import { onlyIncludeSeasonAndTypeInQuery } from '../../utils/routingHelpers';
