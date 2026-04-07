@@ -1,10 +1,10 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { Game } from 'typings/api';
 
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
-import { Game } from '../../../v1/schedule';
 import {
   TeamIdentity,
   TeamRecordRow,

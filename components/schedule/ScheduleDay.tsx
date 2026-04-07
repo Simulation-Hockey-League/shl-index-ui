@@ -1,4 +1,5 @@
-import { Game } from '../../pages/api/v1/schedule';
+import { Game } from 'typings/api';
+
 import { TeamInfo } from '../../pages/api/v1/teams';
 import { League } from '../../utils/leagueHelpers';
 

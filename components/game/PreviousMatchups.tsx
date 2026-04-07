@@ -2,8 +2,8 @@ import { Spinner } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
+import { Game } from 'typings/api';
 
-import { Game } from '../../pages/api/v1/schedule';
 import { GamePreviewData } from '../../pages/api/v2/schedule/game/preview';
 import { League } from '../../utils/leagueHelpers';
 import { query } from '../../utils/query';

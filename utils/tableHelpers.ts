@@ -10,19 +10,7 @@ export const downloadTableAsCSV = <T extends Record<string, unknown>>(
     .getFilteredRowModel()
     .rows.map(({ original }) => original);
 
-  const tableRowHeaders = Object.keys(tableRowData[0] ?? {});
-
-  const contents = stringify([
-    tableRowHeaders,
-    ...tableRowData.map((row) => Object.values(row ?? {})),
-  ]);
-
-  saveAs(
-    new Blob([contents], {
-      type: 'text/csv;charset=utf-8',
-    }),
-    `${label ?? 'shl-data'}.csv`,
-  );
+  downloadRowsAsCSV(tableRowData, label);
 };
 
 export const intToOrdinalNumberString = (num: number | undefined): string => {
@@ -44,4 +32,25 @@ export const intToOrdinalNumberString = (num: number | undefined): string => {
     default:
       return numString + 'th';
   }
+};
+
+export const downloadRowsAsCSV = <T extends Record<string, unknown>>(
+  rows: T[],
+  label?: string,
+): void => {
+  if (!rows.length) return;
+
+  const tableRowHeaders = Object.keys(rows[0]);
+
+  const contents = stringify([
+    tableRowHeaders,
+    ...rows.map((row) => Object.values(row)),
+  ]);
+
+  saveAs(
+    new Blob([contents], {
+      type: 'text/csv;charset=utf-8',
+    }),
+    `${label ?? 'shl-data'}.csv`,
+  );
 };

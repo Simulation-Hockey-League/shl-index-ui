@@ -413,3 +413,36 @@ export type PlayerNames = {
   PlayerID: number;
   Name: string;
 };
+
+export type GameRow = {
+  Slug: string;
+  SeasonID: number;
+  LeagueID: number;
+  Date: string;
+  Home: number;
+  HomeScore: number;
+  Away: number;
+  AwayScore: number;
+  Overtime: number;
+  Shootout: number;
+  Played: number;
+  Type: SeasonType;
+  GameID: number | null;
+};
+
+export type Game = {
+  slug: string;
+  season: number;
+  league: number;
+  date: string;
+  homeTeam: number;
+  homeScore: number;
+  awayTeam: number;
+  awayScore: number;
+  overtime: number;
+  shootout: number;
+  played: number;
+  type: SeasonType;
+  gameid: number | null;
+  wlOtl?: string;
+};
