@@ -16,6 +16,15 @@ export const TEAM_STATS_TABLE: TableBehavioralFlags = {
   showTableFilterOptions: false,
 };
 
+export const GAMES_TABLE: TableBehavioralFlags = {
+  stickyFirstColumn: false,
+  showTableFooter: false,
+  showCSVExportButton: true,
+  enablePagination: true,
+  enableFiltering: true,
+  showTableFilterOptions: false,
+};
+
 export const SKATER_TABLE_FLAGS = ({
   playerType,
   type,

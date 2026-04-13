@@ -2,8 +2,9 @@
 import Cors from 'cors';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SQL from 'sql-template-strings';
+import { Game, GameRow } from 'typings/api';
 
-import { Game, convertGameRowToGame, GameRow } from '..';
+import { convertGameRowToGame } from '..';
 import { query } from '../../../../../lib/db';
 import use from '../../../../../lib/middleware';
 
