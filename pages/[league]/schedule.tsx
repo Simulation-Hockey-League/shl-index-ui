@@ -1,5 +1,6 @@
 import { DownloadIcon } from '@chakra-ui/icons';
 import { Checkbox, IconButton, Spinner } from '@chakra-ui/react';
+import { Tooltip } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import { ScheduleTable } from 'components/tables/ScheduleTable';
 import { groupBy, isEmpty } from 'lodash';
@@ -151,17 +152,23 @@ export default ({ league }: { league: League }) => {
                   />
                   <div className="flex items-center overflow-hidden rounded border border-primary text-sm">
                     {(['classic', 'table'] as ViewMode[]).map((mode) => (
-                      <button
+                      <Tooltip
                         key={mode}
-                        onClick={() => setRouterPageState('viewMode', mode)}
-                        className={`px-3 py-1 capitalize transition-colors ${
-                          viewMode === mode
-                            ? 'bg-blue600'
-                            : 'bg-primary text-secondary hover:bg-secondary'
-                        }`}
+                        label="Select a team to use table view"
+                        isDisabled={!(mode === 'table' && selectedTeam === -1)}
                       >
-                        {mode}
-                      </button>
+                        <button
+                          onClick={() => setRouterPageState('viewMode', mode)}
+                          disabled={mode === 'table' && selectedTeam === -1}
+                          className={`px-3 py-1 capitalize transition-colors ${
+                            viewMode === mode
+                              ? 'bg-blue600'
+                              : 'bg-primary text-secondary hover:bg-secondary'
+                          } ${mode === 'table' && selectedTeam === -1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                        >
+                          {mode}
+                        </button>
+                      </Tooltip>
                     ))}
                   </div>
                   <Checkbox
