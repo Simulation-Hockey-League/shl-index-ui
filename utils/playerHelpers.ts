@@ -54,8 +54,19 @@ export const getPlayerShortname = (name: string): string => {
   return `${shortName}${splitName.slice(-1)}`;
 };
 
+export type AnyLine = {
+  LW?: { id: number; name: string };
+  C?: { id: number; name: string };
+  RW?: { id: number; name: string };
+  LD?: { id: number; name: string };
+  RD?: { id: number; name: string };
+};
+
+export const FORWARD_POSITIONS = ['LW', 'C', 'RW'] as const;
+export const DEFENSE_POSITIONS = ['LD', 'RD'] as const;
+
 export const calculateTimeOnIce = (toi: number, gamesPlayed: number) =>
-  `${(toi / gamesPlayed / 60) >> 0}:${((toi / gamesPlayed) % 60 >> 0)
+  `${(toi / gamesPlayed / 60) >> 0}:${(((toi / gamesPlayed) % 60) >> 0)
     .toString()
     .padStart(2, '0')}`;
 

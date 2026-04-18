@@ -383,6 +383,8 @@ const getLogoId = (
           return 'Canada_Red';
         case 'CAB':
           return 'Canada_Black';
+        case 'CZE':
+          return 'Czechia';
         case 'CZH':
           return 'Czechia';
         case 'DCH':

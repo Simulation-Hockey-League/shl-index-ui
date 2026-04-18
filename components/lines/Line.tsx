@@ -1,25 +1,136 @@
-import { useRef } from 'react';
-
-import { TeamLines } from '../../pages/api/v1/teams/[id]/lines';
+import { Box, Grid } from '@chakra-ui/react';
+import { TeamInfo } from 'pages/api/v1/teams';
+import { useMemo } from 'react';
+import {
+  AnyLine,
+  DEFENSE_POSITIONS,
+  FORWARD_POSITIONS,
+} from 'utils/playerHelpers';
 
 import { LinePlayer } from './LinePlayer';
 
-const LinePlayers = ({
-  lineup,
+const PositionGrid = ({
+  lineEntries,
+  teamColors,
 }: {
-  lineup: Partial<TeamLines['ES']['5on5']['L1']>;
+  lineEntries: AnyLine[];
+  teamColors: TeamInfo['colors'];
 }) => {
+  const activeFwdCols = FORWARD_POSITIONS.filter((p) =>
+    lineEntries.some((l) => l[p]),
+  );
+  const activeDefCols = DEFENSE_POSITIONS.filter((p) =>
+    lineEntries.some((l) => l[p]),
+  );
+
   return (
-    <div className="mx-auto mb-5 flex w-full flex-col items-center justify-center">
-      <div className="mb-5 flex w-full flex-row items-center justify-center">
-        {lineup.LW && <LinePlayer player={lineup.LW} position="LW" />}
-        {lineup.C && <LinePlayer player={lineup.C} position="C" />}
-        {lineup.RW && <LinePlayer player={lineup.RW} position="RW" />}
-      </div>
-      <div className="mb-5 flex w-full flex-row items-center justify-center">
-        {lineup.LD && <LinePlayer player={lineup.LD} position="LD" />}
-        {lineup.RD && <LinePlayer player={lineup.RD} position="RD" />}
-      </div>
+    <div className="flex flex-col gap-6">
+      {activeFwdCols.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <Grid
+            templateColumns={`2.5rem repeat(${activeFwdCols.length}, 1fr)`}
+            gap={1}
+          >
+            <Box />
+            {activeFwdCols.map((pos) => (
+              <div
+                key={pos}
+                className="text-center text-xs uppercase tracking-widest"
+              >
+                {pos}
+              </div>
+            ))}
+          </Grid>
+          {lineEntries.map((line, i) => (
+            <Grid
+              key={i}
+              templateColumns={`2.5rem repeat(${activeFwdCols.length}, 1fr)`}
+              gap={1}
+              alignItems="stretch"
+            >
+              <div className="text-xs">L{i + 1}</div>
+              {activeFwdCols.map((pos) => (
+                <Box key={pos}>
+                  {line[pos] ? (
+                    <LinePlayer
+                      player={line[pos]}
+                      className="w-full justify-center"
+                      teamColors={teamColors}
+                    />
+                  ) : (
+                    <div className="flex w-full items-center justify-center rounded-md border border-dashed border-grey200 py-3 text-xs">
+                      —
+                    </div>
+                  )}
+                </Box>
+              ))}
+            </Grid>
+          ))}
+        </div>
+      )}
+
+      {activeDefCols.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <Grid
+            templateColumns={`2.5rem repeat(${activeFwdCols.length}, 1fr)`}
+            gap={1}
+          >
+            <Box />
+            <Box
+              gridColumn={`2 / span ${activeFwdCols.length}`}
+              display="flex"
+              justifyContent={activeFwdCols.length === 3 ? 'center' : 'start'}
+              gap={2}
+            >
+              {activeDefCols.map((pos) => (
+                <div
+                  key={pos}
+                  className="w-1/3 text-center text-xs font-semibold uppercase"
+                >
+                  {pos}
+                </div>
+              ))}
+            </Box>
+          </Grid>
+          {lineEntries.map((line, i) => (
+            <Grid
+              key={i}
+              templateColumns={`2.5rem repeat(${activeFwdCols.length}, 1fr)`}
+              gap={1}
+              alignItems="stretch"
+            >
+              <div className="text-xs">L{i + 1}</div>
+              <Grid
+                gridColumn={`2 / span ${activeFwdCols.length}`}
+                templateColumns={`repeat(${activeDefCols.length}, 1fr)`}
+                gap={1}
+                w={
+                  activeFwdCols.length === 3
+                    ? `${(activeDefCols.length / 3) * 100}%`
+                    : 'full'
+                }
+                mx={activeFwdCols.length === 3 ? 'auto' : undefined}
+              >
+                {activeDefCols.map((pos) => (
+                  <Box key={pos}>
+                    {line[pos] ? (
+                      <LinePlayer
+                        player={line[pos]}
+                        className="w-full justify-center"
+                        teamColors={teamColors}
+                      />
+                    ) : (
+                      <div className="flex w-full items-center justify-center rounded-md border border-dashed py-3">
+                        —
+                      </div>
+                    )}
+                  </Box>
+                ))}
+              </Grid>
+            </Grid>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -28,67 +139,29 @@ export const Line = ({
   type,
   lines,
   columns = 3,
+  teamColors,
 }: {
   type: string;
-  lines:
-    | TeamLines['ES'][Keys<TeamLines['ES']>]
-    | TeamLines['PP'][Keys<TeamLines['PP']>]
-    | TeamLines['PK'][Keys<TeamLines['PK']>];
+  lines: Record<string, AnyLine>;
   columns: 3 | 4;
+  teamColors: TeamInfo['colors'];
 }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const lineEntries = useMemo(
+    () =>
+      Object.values(lines)
+        .slice(0, columns)
+        .filter((l) => l.LW || l.C || l.RW || l.LD || l.RD),
+    [lines, columns],
+  );
+
+  if (!lineEntries.length) return null;
 
   return (
-    <>
-      <div className="m-auto w-2/5 border-b border-b-grey900 py-5 text-center font-mont text-3xl font-semibold">
+    <div className="mb-5">
+      <div className="mb-4 border-b border-b-grey200 pb-3 text-center font-mont text-2xl font-bold">
         {type.split('on').join(' on ')}
       </div>
-      <div className="m-auto flex w-full items-center justify-between px-2.5">
-        <div
-          className="m-5 cursor-pointer font-mont text-5xl"
-          onClick={() => {
-            if (!ref.current) return;
-
-            ref.current.scrollLeft -= ref.current.clientWidth;
-          }}
-        >
-          &lt;
-        </div>
-        <div
-          className="no-scrollbar mx-auto grid w-full snap-x snap-mandatory grid-flow-col overflow-y-hidden overflow-x-scroll scroll-smooth py-5"
-          style={{
-            gridTemplateColumns: `repeat(${columns}, 100%)`,
-            overscrollBehaviorX: 'contain',
-          }}
-          ref={ref}
-        >
-          {Object.values(lines).map((currLine, i) => {
-            if (i === columns) return null;
-            return (
-              <div
-                key={i}
-                className="flex w-full snap-center flex-col items-center justify-center"
-              >
-                <h4 className="mb-2.5 font-mont text-xl font-normal">
-                  {i + 1}
-                  {['st', 'nd', 'rd', 'th'][i]} Line
-                </h4>
-                <LinePlayers lineup={currLine} />
-              </div>
-            );
-          })}
-        </div>
-        <div
-          className="m-5 cursor-pointer font-mont text-5xl"
-          onClick={() => {
-            if (!ref.current) return;
-
-            ref.current.scrollLeft += ref.current.clientWidth;
-          }}
-        >
-          &gt;
-        </div>
-      </div>
-    </>
+      <PositionGrid lineEntries={lineEntries} teamColors={teamColors} />
+    </div>
   );
 };

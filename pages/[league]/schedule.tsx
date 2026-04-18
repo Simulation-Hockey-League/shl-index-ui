@@ -160,7 +160,7 @@ export default ({ league }: { league: League }) => {
                         <button
                           onClick={() => setRouterPageState('viewMode', mode)}
                           disabled={mode === 'table' && selectedTeam === -1}
-                          className={`px-3 py-1 capitalize transition-colors ${
+                          className={`px-4 py-2 text-base capitalize transition-colors sm:px-3 sm:py-1 sm:text-sm ${
                             viewMode === mode
                               ? 'bg-blue600'
                               : 'bg-primary text-secondary hover:bg-secondary'

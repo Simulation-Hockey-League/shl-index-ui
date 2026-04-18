@@ -1,4 +1,6 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Tabs, Tab, TabList, TabPanels, TabPanel } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
 import { partition } from 'lodash';
@@ -110,6 +112,17 @@ export default ({
     () => colors && tinycolor(colors.primary).isDark(),
     [colors],
   );
+  const displayColors = useMemo(() => {
+    const bgColor = tinycolor(colors.primary).isLight()
+      ? colors.secondary
+      : colors.primary;
+    const isDark = tinycolor(bgColor).isDark();
+    return {
+      primary: bgColor,
+      secondary: colors.secondary,
+      text: isDark ? '#F5F5F5' : colors.text,
+    };
+  }, [colors]);
 
   const [rosterSkaters, rosterGoalies] = useMemo(
     () =>
@@ -184,6 +197,16 @@ export default ({
             | <span className="mx-4">{stats.points} PTS</span> |{' '}
             <span className="ml-4">{stats.winPercent.toFixed(3)}</span>
           </h3>
+          <Link
+            href={`https://portal.simulationhockey.com/teams/${league}/${teamdata.id}`}
+            className={classnames(
+              teamColorIsDark ? '!text-grey100' : '!text-grey900',
+              'mt-2 font-mont text-sm',
+            )}
+            isExternal
+          >
+            View on Portal <ExternalLinkIcon mx="2px" />
+          </Link>
         </div>
       </div>
       <div className="m-auto w-full bg-primary p-[2.5%] lg:w-3/4 lg:p-8">
@@ -333,7 +356,11 @@ export default ({
             </TabPanel>
             {shouldShowLinesTab && (
               <TabPanel px={0}>
-                <Lines league={league} lines={teamLines} />
+                <Lines
+                  league={league}
+                  lines={teamLines}
+                  teamColors={displayColors}
+                />
               </TabPanel>
             )}
           </TabPanels>

@@ -1,41 +1,50 @@
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
-import React from 'react';
 
+import { TeamInfo } from '../../pages/api/v1/teams';
 import { getPlayerShortname } from '../../utils/playerHelpers';
 import { onlyIncludeSeasonAndTypeInQuery } from '../../utils/routingHelpers';
 import { Link } from '../common/Link';
 
 export const LinePlayer = ({
   player,
-  position,
+  teamColors,
+
   className,
 }: {
   player: { id: number; name: string } | undefined;
-  position: string;
+  teamColors: TeamInfo['colors'];
   className?: string;
 }) => {
   const router = useRouter();
+
+  if (!player) return null;
+
   return (
-    <div
+    <Link
+      href={{
+        pathname: '/[league]/player/[id]',
+        query: {
+          ...onlyIncludeSeasonAndTypeInQuery(router.query),
+          id: player.id,
+        },
+      }}
+      style={{
+        backgroundColor: teamColors.primary,
+        borderColor: teamColors.secondary,
+        color: teamColors.text,
+      }}
       className={classnames(
-        'mx-5 flex min-w-[200px] max-w-[350px] flex-col items-center justify-center overflow-hidden whitespace-nowrap rounded px-12 py-8 shadow-[0px_0px_15px_rgba(0,_0,_0,_0.1)]',
+        'flex min-h-[44px] h-full items-center justify-center gap-2 overflow-hidden rounded-md border px-3 py-3 transition-opacity hover:opacity-80',
         className,
       )}
     >
-      <Link
-        href={{
-          pathname: '/[league]/player/[id]',
-          query: {
-            ...onlyIncludeSeasonAndTypeInQuery(router.query),
-            id: player?.id,
-          },
-        }}
-        className="mb-2.5 inline-block text-ellipsis whitespace-nowrap text-lg font-bold transition-colors hover:text-blue600"
+      <span
+        className="text-center leading-tight text-xs sm:text-base font-bold"
+        style={{ color: teamColors.text }}
       >
-        {getPlayerShortname(player?.name ?? '')}
-      </Link>
-      <div className="text-base font-semibold">{position}</div>
-    </div>
+        {getPlayerShortname(player.name)}
+      </span>
+    </Link>
   );
 };
