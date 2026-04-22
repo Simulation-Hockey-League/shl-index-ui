@@ -197,6 +197,7 @@ export const DoubleBracket = ({
 
   return (
     <div
+      ref={outerRef}
       className={classnames(
         'w-full',
         isScaled ? 'overflow-hidden' : '',
