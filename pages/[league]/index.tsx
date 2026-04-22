@@ -64,7 +64,7 @@ export default ({ league }: { league: League }) => {
                     Teams performance over the last 15 games
                   </span>
                 </div>
-                <TabList className="mt-2  sm:mt-0">
+                <TabList className="mt-2 sm:mt-0">
                   <Tab fontSize="sm">By Conference</Tab>
                   <Tab fontSize="sm">All Teams</Tab>
                 </TabList>

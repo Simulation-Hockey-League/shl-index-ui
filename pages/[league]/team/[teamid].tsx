@@ -120,7 +120,7 @@ export default ({
     return {
       primary: bgColor,
       secondary: colors.secondary,
-      text: isDark ? '#F5F5F5' : colors.text,
+      text: isDark ? '#ffffff' : colors.text,
     };
   }, [colors]);
 

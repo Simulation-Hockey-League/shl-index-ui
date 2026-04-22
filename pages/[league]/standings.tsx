@@ -38,8 +38,8 @@ export default ({ league }: { league: League }) => {
         type === 'Playoffs'
           ? 'standings/playoffs'
           : type === 'Pre-Season'
-          ? 'standings/preseason'
-          : 'standings';
+            ? 'standings/preseason'
+            : 'standings';
       const displayParam =
         type !== 'Playoffs' ? `&display=${tabs[currentActiveTab]}` : '';
       const seasonParam = season ? `&season=${season}` : '';
@@ -79,17 +79,18 @@ export default ({ league }: { league: League }) => {
                 <DoubleBracket
                   data={data as Exclude<Standings | PlayoffsRound[], Standings>}
                   league={league}
-                  className="hidden xl:flex"
                 />
               )}
 
-              <SingleBracket
-                data={data as Exclude<Standings | PlayoffsRound[], Standings>}
-                league={league}
-                className={classnames(
-                  shouldShowDoublePlayoffsBracket && 'xl:hidden',
-                )}
-              />
+              {!shouldShowDoublePlayoffsBracket && (
+                <SingleBracket
+                  data={data as Exclude<Standings | PlayoffsRound[], Standings>}
+                  league={league}
+                  className={classnames(
+                    shouldShowDoublePlayoffsBracket && 'xl:hidden',
+                  )}
+                />
+              )}
             </>
           ) : (
             <>

@@ -8,6 +8,13 @@ import { Line } from './Line';
 import { LinePlayer } from './LinePlayer';
 import { SpecialTeamsLines } from './SpecialTeams';
 
+const linesDisplays = [
+  'Even Strength',
+  'Power Play',
+  'Penalty Kill',
+  'Misc',
+] as const;
+
 export const Lines = ({
   league,
   lines,
@@ -20,10 +27,9 @@ export const Lines = ({
   return (
     <Tabs>
       <TabList>
-        <Tab>Even Strength</Tab>
-        <Tab>Power Play</Tab>
-        <Tab>Penalty Kill</Tab>
-        <Tab>Other</Tab>
+        {linesDisplays.map((name) => (
+          <Tab key={name}>{name}</Tab>
+        ))}
       </TabList>
       <TabPanels>
         <TabPanel>
@@ -69,10 +75,10 @@ export const Lines = ({
         </TabPanel>
 
         <TabPanel>
-          {Object.entries(lines.PP).map(([situationType, group]) => (
+          {Object.entries(lines.PP).map(([lineType, group]) => (
             <SpecialTeamsLines
-              key={situationType}
-              situationType={situationType}
+              key={lineType}
+              situationType={lineType}
               group={group}
               teamColors={teamColors}
             />
@@ -80,10 +86,10 @@ export const Lines = ({
         </TabPanel>
 
         <TabPanel>
-          {Object.entries(lines.PK).map(([situationType, group]) => (
+          {Object.entries(lines.PK).map(([lineType, group]) => (
             <SpecialTeamsLines
-              key={situationType}
-              situationType={situationType}
+              key={lineType}
+              situationType={lineType}
               group={group}
               teamColors={teamColors}
             />
