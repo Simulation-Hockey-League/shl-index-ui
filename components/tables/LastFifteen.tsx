@@ -74,7 +74,7 @@ export const LastFifteenTable = ({
                   {cellValue[0]}
                 </span>
                 <span className="mx-2.5 my-0 hidden min-w-max text-left text-blue600 md:inline">
-                  {cellValue[1]}
+                  {cellValue[1]} {cellValue[2]}
                 </span>
               </Link>
             );

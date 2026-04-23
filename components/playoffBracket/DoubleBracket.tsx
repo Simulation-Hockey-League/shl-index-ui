@@ -1,7 +1,7 @@
 import { Spinner } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useSeason } from '../../hooks/useSeason';
 import {
@@ -38,6 +38,36 @@ export const DoubleBracket = ({
       );
     },
   });
+
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [isScaled, setIsScaled] = useState(false);
+  const [scaledHeight, setScaledHeight] = useState<number | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    const recalc = () => {
+      if (!outerRef.current || !innerRef.current) return;
+      const outerW = outerRef.current.offsetWidth;
+      const innerW = innerRef.current.scrollWidth;
+      const innerH = innerRef.current.scrollHeight * 1.5;
+      const nextScale = innerW > outerW ? outerW / innerW : 1;
+      setScale(nextScale);
+      setScaledHeight(innerH * nextScale);
+      setIsScaled(nextScale < 1);
+    };
+
+    const raf = requestAnimationFrame(recalc);
+    const ro = new ResizeObserver(recalc);
+    if (outerRef.current) ro.observe(outerRef.current);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [data, teamData]);
 
   const inferCurrentSeriesFromPreviousRound = useCallback(
     (seriesToReturn: number, previousRound: PlayoffsSeries[]) => {
@@ -136,7 +166,6 @@ export const DoubleBracket = ({
           ? getSeriesByConference(data[i - 1], BracketConference.EASTERN)
           : [];
         const sortedRound = sortByDivision(previousRoundInfo);
-
         return inferCurrentSeriesFromPreviousRound(
           seriesPerRound[i],
           sortedRound,
@@ -168,62 +197,96 @@ export const DoubleBracket = ({
 
   return (
     <div
+      ref={outerRef}
       className={classnames(
-        'mt-20 flex size-full flex-row content-between items-center pt-2.5',
+        'w-full',
+        isScaled ? 'overflow-hidden' : '',
         className,
       )}
+      style={isScaled ? { height: scaledHeight ?? 'auto' } : undefined}
     >
-      <div className="flex flex-wrap items-center">
-        {westernConferenceBracketData.map((round, i) => (
-          <div className="flex w-40 flex-col items-center" key={i}>
-            <h2 className="mb-2.5 text-2xl font-bold">
-              {round.length === 1 &&
-              round[0].team1.conference !== round[0].team2.conference
-                ? 'Finals'
-                : `Round ${i + 1}`}
-            </h2>
-            {round.map((series) => (
-              <PlayoffBracketSeries
-                key={`${series.team1.id}${series.team2.id}`}
-                series={series}
-                teamData={teamData}
-                league={league}
-                shouldUseTeamShortName
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-      <div className="m-auto flex w-40 flex-col items-center">
-        <h2 className="mb-2.5 text-2xl font-bold">Finals</h2>
-        <PlayoffBracketSeries
-          key={`${finalsRoundDataIfExists.team1.id}${finalsRoundDataIfExists.team2.id}`}
-          series={finalsRoundDataIfExists}
-          teamData={teamData}
-          league={league}
-          shouldUseTeamShortName
-        />
-      </div>
-      <div className="flex flex-row-reverse flex-wrap items-center">
-        {easternConferenceBracketData.map((round, i) => (
-          <div className="flex w-40 flex-col items-center" key={i}>
-            <h2 className="mb-2.5 text-2xl font-bold">
-              {round.length === 1 &&
-              round[0].team1.conference !== round[0].team2.conference
-                ? 'Finals'
-                : `Round ${i + 1}`}
-            </h2>
-            {round.map((series) => (
-              <PlayoffBracketSeries
-                key={`${series.team1.id}${series.team2.id}`}
-                series={series}
-                teamData={teamData}
-                league={league}
-                shouldUseTeamShortName
-              />
-            ))}
-          </div>
-        ))}
+      <div
+        ref={innerRef}
+        className={classnames(
+          'mt-20 flex flex-row items-center pt-2.5',
+          !isScaled && 'size-full content-between',
+          isScaled && 'min-w-max',
+        )}
+        style={
+          isScaled
+            ? { transform: `scale(${scale})`, transformOrigin: 'top left' }
+            : undefined
+        }
+      >
+        <div
+          className={classnames(
+            'flex items-center',
+            !isScaled ? 'flex-wrap' : 'flex-row',
+          )}
+        >
+          {westernConferenceBracketData.map((round, i) => (
+            <div className="flex w-40 flex-col items-center" key={i}>
+              <h2 className="mb-2.5 text-2xl font-bold">
+                {round.length === 1 &&
+                round[0].team1.conference !== round[0].team2.conference
+                  ? 'Finals'
+                  : `Round ${i + 1}`}
+              </h2>
+              {round.map((series) => (
+                <PlayoffBracketSeries
+                  key={`${series.team1.id}${series.team2.id}`}
+                  series={series}
+                  teamData={teamData}
+                  league={league}
+                  shouldUseTeamShortName
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div
+          className={classnames(
+            'flex w-40 shrink-0 flex-col items-center',
+            !isScaled ? 'm-auto' : 'mx-2',
+          )}
+        >
+          <h2 className="mb-2.5 text-2xl font-bold">Finals</h2>
+          <PlayoffBracketSeries
+            key={`${finalsRoundDataIfExists.team1.id}${finalsRoundDataIfExists.team2.id}`}
+            series={finalsRoundDataIfExists}
+            teamData={teamData}
+            league={league}
+            shouldUseTeamShortName
+          />
+        </div>
+
+        <div
+          className={classnames(
+            'flex items-center',
+            !isScaled ? 'flex-row-reverse flex-wrap' : 'flex-row-reverse',
+          )}
+        >
+          {easternConferenceBracketData.map((round, i) => (
+            <div className="flex w-40 flex-col items-center" key={i}>
+              <h2 className="mb-2.5 text-2xl font-bold">
+                {round.length === 1 &&
+                round[0].team1.conference !== round[0].team2.conference
+                  ? 'Finals'
+                  : `Round ${i + 1}`}
+              </h2>
+              {round.map((series) => (
+                <PlayoffBracketSeries
+                  key={`${series.team1.id}${series.team2.id}`}
+                  series={series}
+                  teamData={teamData}
+                  league={league}
+                  shouldUseTeamShortName
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
