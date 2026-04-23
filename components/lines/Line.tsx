@@ -147,10 +147,7 @@ export const Line = ({
   teamColors: TeamInfo['colors'];
 }) => {
   const lineEntries = useMemo(
-    () =>
-      Object.values(lines)
-        .slice(0, columns)
-        .filter((l) => l.LW || l.C || l.RW || l.LD || l.RD),
+    () => Object.values(lines).slice(0, columns),
     [lines, columns],
   );
 

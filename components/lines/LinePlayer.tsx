@@ -9,7 +9,6 @@ import { Link } from '../common/Link';
 export const LinePlayer = ({
   player,
   teamColors,
-
   className,
 }: {
   player: { id: number; name: string } | undefined;
@@ -35,12 +34,12 @@ export const LinePlayer = ({
         color: teamColors.text,
       }}
       className={classnames(
-        'flex min-h-[44px] h-full items-center justify-center gap-2 overflow-hidden rounded-md border px-3 py-3 transition-opacity hover:opacity-80',
+        'flex h-full min-h-[44px] items-center justify-center gap-2 overflow-hidden rounded-md border p-3 transition-opacity hover:opacity-80',
         className,
       )}
     >
       <span
-        className="text-center leading-tight text-xs sm:text-base font-bold"
+        className="text-center text-xs font-bold leading-tight sm:text-base"
         style={{ color: teamColors.text }}
       >
         {getPlayerShortname(player.name)}
