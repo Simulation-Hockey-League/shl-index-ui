@@ -196,10 +196,10 @@ export const STHSInfoModal = () => {
                 </AccordionButton>
               </h3>
               <AccordionPanel>
-                IIHF and WJC information is difficult to find and has mostly
-                been lost due to time. We&apos;re hopeful that some of the STHS
-                data for IIHF and WJC will be available in the future, but
-                it&apos;s currently missing.
+                All of the IIHF data is in the index. However, there are many
+                lost seasons of IIHF. For WJC, the data is out there. But still
+                needs to be added into the index. So it is currently unavailable
+                on the site.
               </AccordionPanel>
             </AccordionItem>
           </Accordion>

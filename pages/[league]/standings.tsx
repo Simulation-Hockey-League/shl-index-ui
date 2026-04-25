@@ -86,9 +86,7 @@ export default ({ league }: { league: League }) => {
                 <SingleBracket
                   data={data as Exclude<Standings | PlayoffsRound[], Standings>}
                   league={league}
-                  className={classnames(
-                    shouldShowDoublePlayoffsBracket && 'xl:hidden',
-                  )}
+                  className={classnames(shouldShowDoublePlayoffsBracket)}
                 />
               )}
             </>
