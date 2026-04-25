@@ -35,7 +35,7 @@ const PositionGrid = ({
             {activeFwdCols.map((pos) => (
               <div
                 key={pos}
-                className="text-center text-xs uppercase tracking-widest"
+                className="text-center text-xs font-semibold uppercase tracking-widest"
               >
                 {pos}
               </div>
@@ -76,23 +76,28 @@ const PositionGrid = ({
             gap={1}
           >
             <Box />
-            <Box
+            <Grid
               gridColumn={`2 / span ${activeFwdCols.length}`}
-              display="flex"
-              justifyContent={activeFwdCols.length === 3 ? 'center' : 'start'}
-              gap={2}
+              templateColumns={`repeat(${activeDefCols.length}, 1fr)`}
+              gap={1}
+              w={
+                activeFwdCols.length === 3
+                  ? `${(activeDefCols.length / 3) * 100}%`
+                  : 'full'
+              }
+              mx={activeFwdCols.length === 3 ? 'auto' : undefined}
             >
               {activeDefCols.map((pos) => (
                 <div
                   key={pos}
-                  className="w-1/3 text-center text-xs font-semibold uppercase"
+                  className="text-center text-xs font-semibold uppercase tracking-widest"
                 >
                   {pos}
                 </div>
               ))}
-            </Box>
+            </Grid>
           </Grid>
-          {lineEntries.map((line, i) => (
+          {lineEntries.slice(0, 3).map((line, i) => (
             <Grid
               key={i}
               templateColumns={`2.5rem repeat(${activeFwdCols.length}, 1fr)`}
