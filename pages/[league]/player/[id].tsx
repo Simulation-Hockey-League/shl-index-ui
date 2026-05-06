@@ -268,8 +268,8 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                       <SeasonTypeSelector className="!h-7 w-48" />
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <div className="font-mont text-2xl font-bold uppercase leading-tight md:text-3xl">
+                    <div className="flex flex-col items-center gap-2 md:flex-row">
+                      <div className="text-center font-mont text-2xl font-bold uppercase leading-tight md:text-3xl">
                         {playerNameInfo?.name ?? 'Player'}
                       </div>
 
@@ -281,7 +281,7 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                           <TeamLogo
                             league={league}
                             teamAbbreviation={playerInfo[0]?.team}
-                            className="size-7 md:size-9"
+                            className="size-14 md:size-9"
                           />
                         </Link>
                       )}
