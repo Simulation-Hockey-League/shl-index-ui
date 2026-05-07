@@ -13,9 +13,23 @@ export type InternalPlayerAchievement = {
   won: boolean;
 };
 
-export type InternalIndexPlayerID = {
+export type IndexPortalInfo = {
   playerUpdateID: number;
   leagueID: number;
   indexID: number;
   startSeason: number;
+  username: string;
+  userID: number;
+  handedness: string;
+  season: number;
+  jerseyNumber: number;
+  selectedImage: string;
+};
+
+type PlayerCard = {
+  indexID: number;
+  leagueID: number;
+  card_rarity: string;
+  overall: number;
+  image_url: string;
 };

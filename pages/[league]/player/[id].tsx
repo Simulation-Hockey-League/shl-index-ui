@@ -7,9 +7,11 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Image,
 } from '@chakra-ui/react';
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
+import { PlayerCards } from 'components/PlayerCards';
 import { GoalieBoxscoreTable } from 'components/tables/GoalieBoxscoreTable';
 import { PlayerAwards } from 'components/tables/PlayerAwardsTables';
 import { SkaterBoxscoreTable } from 'components/tables/SkaterBoxscoreTable';
@@ -17,10 +19,12 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { useTheme } from 'next-themes';
+import { pathToCards } from 'pages/api/v1/players/cards';
 import { useEffect, useMemo, useRef } from 'react';
 import {
-  InternalIndexPlayerID,
+  IndexPortalInfo,
   InternalPlayerAchievement,
+  PlayerCard,
 } from 'typings/portal-api';
 
 import { Footer } from '../../../components/Footer';
@@ -65,11 +69,19 @@ const fetchPlayerAwards = (league: League, playerId: string) =>
     )}&fhmID=${playerId}`,
   );
 
-const fetchPortalID = (league: League, playerId: string) =>
+const fetchPortalInfo = (
+  league: League,
+  playerId: string,
+): Promise<IndexPortalInfo[]> =>
   portalQuery(
-    `api/v1/player/index-ids?leagueID=${leagueNameToId(
+    `api/v1/player/index-info?leagueID=${leagueNameToId(
       league,
     )}&indexID=${playerId}`,
+  );
+
+const fetchPlayerCards = (league: League, playerId: string) =>
+  query(
+    `api/v1/players/cards?league=${leagueNameToId(league)}&playerid=${playerId}`,
   );
 
 export default ({ playerId, league }: { playerId: string; league: League }) => {
@@ -127,25 +139,16 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
     queryFn: () => fetchPlayerAwards(league, playerId),
   });
 
-  const { data: playerPortalID } = useQuery<InternalIndexPlayerID[]>({
-    queryKey: ['playerPortalID', league, playerId],
-    queryFn: () => fetchPortalID(league, playerId),
+  const { data: playerPortalInfo } = useQuery({
+    queryKey: ['playerPortalInfo', league, playerId],
+    queryFn: () => fetchPortalInfo(league, playerId),
+    select: (data) => data[0],
   });
 
-  const filteredPortalID = useMemo(() => {
-    if (!playerPortalID || playerPortalID.length === 0) return [];
-
-    if (season) {
-      const current = Number(season);
-      return playerPortalID.filter((entry) => entry.startSeason <= current);
-    }
-
-    const latest = playerPortalID.reduce(
-      (best, entry) => (entry.startSeason > best.startSeason ? entry : best),
-      playerPortalID[0],
-    );
-    return [latest];
-  }, [playerPortalID, season]);
+  const { data: playerCards } = useQuery<PlayerCard[]>({
+    queryKey: ['playerCards', league, playerId],
+    queryFn: () => fetchPlayerCards(league, playerId),
+  });
 
   const { data: playerRatings } = useQuery<PlayerRatings[] | GoalieRatings[]>({
     queryKey: ['playerRatings', league, playerId, playerTypeInfo?.playerType],
@@ -232,51 +235,99 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
               shouldShowIndexView && 'lg:w-11/12',
             )}
           >
-            <div className="flex flex-col items-center md:mr-8 md:flex-row md:justify-end">
-              <SeasonTypeSelector
-                className={classnames('mb-4 md:mb-0 md:ml-4', {
-                  'top-7 !h-7 w-48': shouldShowIndexView,
-                })}
-              />
-            </div>
             {shouldShowIndexView && (
-              <div className="my-2.5 flex flex-col items-center justify-center space-y-5">
-                <Link
-                  href={`/${league}/team/${playerInfo[0].teamID}`}
-                  aria-label={`View ${playerInfo[0].team}'s page`}
-                >
-                  <TeamLogo
-                    league={league}
-                    teamAbbreviation={playerInfo[0]?.team}
-                    className="mt-10 size-40 md:mt-2.5"
-                  />
-                </Link>
-                <div className=" group flex items-center gap-2 text-3xl font-bold uppercase">
-                  {playerNameInfo?.name ?? 'Player'}
-                </div>
-                <div>
-                  {shouldShowIndexView && filteredPortalID.length > 0 && (
-                    <div className="space-y-1 text-center">
-                      {filteredPortalID.map((entry) => (
+              <div className="my-4 px-4">
+                <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-6">
+                  <div className="order-2 flex shrink-0 items-center justify-center md:order-1">
+                    {playerCards && playerCards.length > 0 ? (
+                      <Image
+                        src={
+                          playerPortalInfo?.selectedImage
+                            ? `${pathToCards}${playerPortalInfo.selectedImage}`
+                            : playerCards[0].image_url
+                        }
+                        alt={`${playerNameInfo?.name ?? 'Player'} card`}
+                        className="h-44 w-auto rounded-md object-contain md:h-48"
+                      />
+                    ) : (
+                      <Link
+                        href={`/${league}/team/${playerInfo[0].teamID}`}
+                        aria-label={`View ${playerInfo[0].team}'s page`}
+                      >
+                        <TeamLogo
+                          league={league}
+                          teamAbbreviation={playerInfo[0]?.team}
+                          className="size-32 md:size-40"
+                        />
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="order-1 flex min-w-0 flex-1 flex-col items-center gap-2 md:order-2 md:items-start">
+                    <div className="flex w-full justify-center md:justify-end">
+                      <SeasonTypeSelector className="!h-7 w-48" />
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2 md:flex-row">
+                      <div className="text-center font-mont text-2xl font-bold uppercase leading-tight md:text-3xl">
+                        {playerNameInfo?.name ?? 'Player'}
+                      </div>
+
+                      {playerCards && playerCards.length > 0 && (
                         <Link
-                          key={entry.playerUpdateID}
+                          href={`/${league}/team/${playerInfo[0].teamID}`}
+                          className="flex-shrink-0"
+                        >
+                          <TeamLogo
+                            league={league}
+                            teamAbbreviation={playerInfo[0]?.team}
+                            className="size-14 md:size-9"
+                          />
+                        </Link>
+                      )}
+                    </div>
+
+                    {playerPortalInfo && (
+                      <div className="text-center font-mont text-sm text-secondary md:text-left">
+                        <Link
                           className="!text-blue600"
-                          href={`https://portal.simulationhockey.com/player/${entry.playerUpdateID}`}
+                          href={`https://simulationhockey.com/member.php?action=profile&uid=${playerPortalInfo.userID}`}
+                          isExternal
+                        >
+                          {playerPortalInfo.username}
+                        </Link>
+                        {' · '}#{playerPortalInfo.jerseyNumber}
+                        {' · '}S{playerPortalInfo.season}
+                        {' · '}
+                        <Link
+                          className="!text-blue600"
+                          href={`https://portal.simulationhockey.com/player/${playerPortalInfo.playerUpdateID}`}
                           isExternal
                         >
                           View in portal <ExternalLinkIcon mx="2px" />
                         </Link>
-                      ))}
+                      </div>
+                    )}
+
+                    <div className="text-center font-mont text-lg uppercase">
+                      {'position' in playerInfo[0]
+                        ? playerInfo[0].position
+                        : 'G'}{' '}
+                      | {Math.floor(playerInfo[0].height / 12)} ft{' '}
+                      {playerInfo[0].height % 12} in | {playerInfo[0].weight}{' '}
+                      lbs
                     </div>
-                  )}
-                </div>
-                <div className="text-center font-mont text-lg uppercase">
-                  {'position' in playerInfo[0] ? playerInfo[0].position : 'G'} |{' '}
-                  {Math.floor(playerInfo[0].height / 12)} ft{' '}
-                  {playerInfo[0].height % 12} in | {playerInfo[0].weight} lbs
+                  </div>
                 </div>
               </div>
             )}
+
+            {!shouldShowIndexView && (
+              <div className="flex flex-col items-center md:mr-8 md:flex-row md:justify-end">
+                <SeasonTypeSelector className="top-7 mb-4 !h-7 w-48 md:mb-0 md:ml-4" />
+              </div>
+            )}
+
             <Tabs isLazy>
               <TabList flexWrap="wrap">
                 <Tab
@@ -313,16 +364,22 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                 >
                   Game Logs
                 </Tab>
-                {playerAwards && playerAwards.length > 0 && (
-                  <Tab
-                    _selected={{
-                      color: 'rgb(var(--hyperlink))',
-                      borderBottomColor: 'rgb(var(--hyperlink))',
-                    }}
-                  >
-                    Awards
-                  </Tab>
-                )}
+                <Tab
+                  _selected={{
+                    color: 'rgb(var(--hyperlink))',
+                    borderBottomColor: 'rgb(var(--hyperlink))',
+                  }}
+                >
+                  Awards
+                </Tab>
+                <Tab
+                  _selected={{
+                    color: 'rgb(var(--hyperlink))',
+                    borderBottomColor: 'rgb(var(--hyperlink))',
+                  }}
+                >
+                  Cards
+                </Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -409,6 +466,9 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                   {playerAwards && playerAwards.length > 0 && (
                     <PlayerAwards playerAwards={playerAwards} />
                   )}
+                </TabPanel>
+                <TabPanel>
+                  {playerCards && <PlayerCards cards={playerCards} />}
                 </TabPanel>
               </TabPanels>
             </Tabs>
