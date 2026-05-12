@@ -2,7 +2,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { TeamInfo } from 'pages/api/v1/teams';
 
 import { TeamLines } from '../../pages/api/v1/teams/[id]/lines';
-import { isMainLeague, League } from '../../utils/leagueHelpers';
+import { League } from '../../utils/leagueHelpers';
 
 import { Line } from './Line';
 import { LinePlayer } from './LinePlayer';
@@ -40,7 +40,7 @@ export const Lines = ({
                 key={lineType}
                 type={lineType}
                 lines={group}
-                columns={!isMainLeague(league) ? 4 : 3}
+                columns={league != 'shl' ? 4 : 3}
                 teamColors={teamColors}
               />
             ))}
@@ -68,7 +68,7 @@ export const Lines = ({
                 key={lineType}
                 type={lineType}
                 lines={group}
-                columns={!isMainLeague(league) ? 4 : 3}
+                columns={league != 'shl' ? 4 : 3}
                 teamColors={teamColors}
               />
             ))}
