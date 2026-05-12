@@ -238,55 +238,51 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
             {shouldShowIndexView && (
               <div className="my-4 px-4">
                 <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-6">
-                  <div className="order-2 flex shrink-0 items-center justify-center md:order-1">
-                    {playerCards && playerCards.length > 0 ? (
-                      <Image
-                        src={
-                          playerPortalInfo?.selectedImage
-                            ? `${pathToCards}${playerPortalInfo.selectedImage}`
-                            : playerCards[0].image_url
-                        }
-                        alt={`${playerNameInfo?.name ?? 'Player'} card`}
-                        className="h-44 w-auto rounded-md object-contain md:h-48"
-                      />
-                    ) : (
-                      <Link
-                        href={`/${league}/team/${playerInfo[0].teamID}`}
-                        aria-label={`View ${playerInfo[0].team}'s page`}
-                      >
-                        <TeamLogo
-                          league={league}
-                          teamAbbreviation={playerInfo[0]?.team}
-                          className="size-32 md:size-40"
-                        />
-                      </Link>
-                    )}
-                  </div>
-
                   <div className="order-1 flex min-w-0 flex-1 flex-col items-center gap-2 md:order-2 md:items-start">
                     <div className="flex w-full justify-center md:justify-end">
                       <SeasonTypeSelector className="!h-7 w-48" />
                     </div>
-
                     <div className="flex flex-col items-center gap-2 md:flex-row">
                       <div className="text-center font-mont text-2xl font-bold uppercase leading-tight md:text-3xl">
                         {playerNameInfo?.name ?? 'Player'}
                       </div>
-
                       {playerCards && playerCards.length > 0 && (
                         <Link
                           href={`/${league}/team/${playerInfo[0].teamID}`}
-                          className="flex-shrink-0"
+                          className="hidden flex-shrink-0 md:block"
                         >
                           <TeamLogo
                             league={league}
                             teamAbbreviation={playerInfo[0]?.team}
-                            className="size-14 md:size-9"
+                            className="size-9"
                           />
                         </Link>
                       )}
                     </div>
-
+                    <div className="flex shrink-0 items-center justify-center md:hidden">
+                      {playerCards && playerCards.length > 0 ? (
+                        <Image
+                          src={
+                            playerPortalInfo?.selectedImage
+                              ? `${pathToCards}${playerPortalInfo.selectedImage}`
+                              : playerCards[0].image_url
+                          }
+                          alt={`${playerNameInfo?.name ?? 'Player'} card`}
+                          className="h-64 w-auto rounded-md object-contain"
+                        />
+                      ) : (
+                        <Link
+                          href={`/${league}/team/${playerInfo[0].teamID}`}
+                          aria-label={`View ${playerInfo[0].team}'s page`}
+                        >
+                          <TeamLogo
+                            league={league}
+                            teamAbbreviation={playerInfo[0]?.team}
+                            className="size-32"
+                          />
+                        </Link>
+                      )}
+                    </div>
                     {playerPortalInfo && (
                       <div className="text-center font-mont text-sm text-secondary md:text-left">
                         <Link
@@ -317,6 +313,44 @@ export default ({ playerId, league }: { playerId: string; league: League }) => {
                       {playerInfo[0].height % 12} in | {playerInfo[0].weight}{' '}
                       lbs
                     </div>
+
+                    {playerCards && playerCards.length > 0 && (
+                      <Link
+                        href={`/${league}/team/${playerInfo[0].teamID}`}
+                        className="flex-shrink-0 md:hidden"
+                      >
+                        <TeamLogo
+                          league={league}
+                          teamAbbreviation={playerInfo[0]?.team}
+                          className="size-14"
+                        />
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="order-2 hidden shrink-0 items-center justify-center md:order-1 md:flex">
+                    {playerCards && playerCards.length > 0 ? (
+                      <Image
+                        src={
+                          playerPortalInfo?.selectedImage
+                            ? `${pathToCards}${playerPortalInfo.selectedImage}`
+                            : playerCards[0].image_url
+                        }
+                        alt={`${playerNameInfo?.name ?? 'Player'} card`}
+                        className="h-48 w-auto rounded-md object-contain"
+                      />
+                    ) : (
+                      <Link
+                        href={`/${league}/team/${playerInfo[0].teamID}`}
+                        aria-label={`View ${playerInfo[0].team}'s page`}
+                      >
+                        <TeamLogo
+                          league={league}
+                          teamAbbreviation={playerInfo[0]?.team}
+                          className="size-40"
+                        />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
