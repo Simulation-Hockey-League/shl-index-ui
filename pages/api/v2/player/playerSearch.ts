@@ -7,7 +7,7 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> => {
-  const { league, isGoalie } = req.query;
+  const { league, isGoalie, seasonID } = req.query;
 
   if (!league) {
     res.status(400).json({ error: 'Missing leagueID' });
@@ -33,6 +33,9 @@ export default async (
     } else {
       search.append(SQL` AND pr.G != 20`);
     }
+  }
+  if (seasonID !== undefined) {
+    search.append(SQL`AND pm.SeasonID = ${seasonID}`);
   }
 
   search.append(SQL` GROUP BY pm.PlayerID`);
